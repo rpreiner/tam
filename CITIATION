@@ -1,0 +1,12 @@
+If you use this code, in a modified or unmodified version, or if you create code based on or inspired by its substantial parts
+in your academic projects, please cite our paper as appropriate: 
+
+@article {10.1111:cgf.13987,
+    journal = {Computer Graphics Forum},
+    title = {{Augmenting Node-Link Diagrams with Topographic Attribute Maps}},
+    author = {Preiner, Reinhold and Schmidt, Johanna and Krösl, Katharina and Schreck, Tobias and Mistelbauer, Gabriel},
+    year = {2020},
+    publisher = {The Eurographics Association and John Wiley & Sons Ltd.},
+    ISSN = {1467-8659},
+    DOI = {10.1111/cgf.13987}
+}

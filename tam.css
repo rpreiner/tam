@@ -1,0 +1,176 @@
+
+/* ######################### General ######################### */
+
+*{
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+
+body {
+    color: #222;
+    font-family: Arial, Helvetica, sans-serif;
+	overflow: hidden;
+}
+
+
+/* ######################### SVG Canvas ######################### */
+
+#canvas {
+  margin-left: 200px;
+  height: 100%;
+  vertical-align: top;
+  overflow: hidden;
+}
+
+#tam {
+width: 100%;
+height: 100%;
+}	
+
+/*.shadingContours {
+mix-blend-mode: multiply;
+}*/
+
+/* ######################### Menu Bar ######################### */
+
+td.paramlabel{
+  width: 110px;
+  padding: 0px 15px 3px 0px
+}
+
+td.param{
+  padding: 0px 0px 3px 0px;
+}
+
+.paramspinbox {
+  width: 45px; 
+  text-align: right;
+  font-size: 9pt;
+}
+
+#menubar {
+	float: left;
+	display: inline-block;
+	width: 200px;
+	height: 100%;
+	padding: 0px 5px 5px 5px;
+	border: 1px solid #CCCCCC;
+	background-color: rgb(255, 255, 255);
+	font-size: 9pt;
+}
+
+#menubar .parameter {
+	margin: 5px 0px 0px 0px;
+	text-align: left;
+}
+
+#menubar .parameter table {
+	width: 100%;
+	font-size: 9pt;
+}
+
+#menubar button {
+    background: transparent;
+	  border-radius: 15em;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    outline: none;
+	  background:#10bc98;
+	  color:#fff;	
+	  box-shadow: 0 3px 0 #0c8d72;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    -webkit-transition: all 0.2s ease-in-out 0s;
+    -moz-transition: all 0.2s ease-in-out 0s;
+    -ms-transition: all 0.2s ease-in-out 0s;
+     transition: all 0.2s ease-in-out 0s;
+}
+
+#menubar button:hover{
+	background:#13d7ae;
+}
+
+#menubar button:active, #menubar button:focus{
+	background:#0fae8d;
+}
+
+#menubar .switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 22px;
+}
+
+#menubar .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#menubar .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .2s;
+  transition: .2s;
+  border-radius: 20px;
+}
+
+#menubar .slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: .2s;
+  transition: .2s;
+  border-radius: 50%;
+}
+
+#menubar input:checked + .slider {
+  background-color: #2196F3;
+}
+
+#menubar input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+#menubar input:checked + .slider:before {
+  -webkit-transform: translateX(14px);
+  -ms-transform: translateX(14px);
+  transform: translateX(14px);
+}
+
+#menubar fieldset {
+	margin: 5px 5px 10px 5px;
+	padding: 7px;
+	border: 1px solid rgb(200,200,200);
+}
+
+#menubar fieldset legend {
+	font-size: 7pt;
+	margin: 0px 3px 0px 3px;
+}
+
+#menubar fieldset table {
+	font-size: 9pt;
+}
+
+#menubar fieldset .btn {
+	margin: 15px 0px 5px 0px;
+	text-align: center;
+}
