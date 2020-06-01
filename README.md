@@ -1,2 +1,2 @@
-# tam-src
+# tam
 Topographic Attribute Maps - Demo Implementation
