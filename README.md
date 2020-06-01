@@ -1,15 +1,20 @@
-# tam
-Topographic Attribute Maps - Demo Implementation
+# Topographic Attribute Maps
+
+Demo Implementation
+
 Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
 
-## Data Loading
+### Data Loading
 
 The graph data is provided in JSON format, the path to be loaded is specified at the end of index.htm.
 See the default example in 'data/MA.json' to see how to specify an attributed graph. 
 
+The force-layout and TAM parameters are set by default to produce this TAM of Marie Antoinette:
 
-## Controls
+<img align="center" src="/images/marie-antoinette.png" width="600">
+
+### Controls
 
 Initially the D3 force layout can be interactively modified by picking and pulling individual nodes 
 and by using the force strength controls in the menu.
