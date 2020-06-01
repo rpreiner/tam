@@ -1,6 +1,8 @@
 # Topographic Attribute Maps
 
-Demo Implementation
+Demo Implementation for Publication  
+*Augmenting Node-Link Diagrams with Topographic Attribute Maps*  
+https://diglib.eg.org/handle/10.1111/cgf13987
 
 Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
@@ -13,6 +15,7 @@ See the default example in 'data/MA.json' to see how to specify an attributed gr
 The force-layout and TAM parameters are set by default to produce this TAM of Marie Antoinette:
 
 <img align="center" src="/images/marie-antoinette.png" width="600">
+
 
 ### Controls
 
