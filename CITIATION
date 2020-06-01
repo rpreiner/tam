@@ -6,6 +6,9 @@ in your academic projects, please cite our paper as appropriate:
     title = {{Augmenting Node-Link Diagrams with Topographic Attribute Maps}},
     author = {Preiner, Reinhold and Schmidt, Johanna and Krösl, Katharina and Schreck, Tobias and Mistelbauer, Gabriel},
     year = {2020},
+    number = {3},
+    pages = {396--381},
+    volume = {39},
     publisher = {The Eurographics Association and John Wiley & Sons Ltd.},
     ISSN = {1467-8659},
     DOI = {10.1111/cgf.13987}
