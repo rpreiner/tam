@@ -3,9 +3,11 @@
 Demo Implementation for Publication  
 *Augmenting Node-Link Diagrams with Topographic Attribute Maps*  
 https://diglib.eg.org/handle/10.1111/cgf13987
-
 Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
+### Run the demo
+
+The Webdemo can be directly run by opening the index.htm file in the Firefox browser (last tested on Version 89.0).
 
 ### Data Loading
 
