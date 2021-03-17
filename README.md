@@ -7,7 +7,7 @@ Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
 ### Run the Demo
 
-The Webdemo can be directly run by opening the index.htm file in the Firefox browser (last tested on Version 89.0).
+The Webdemo can be directly run by opening the index.htm file in the Firefox browser (last tested on Version 86.0).
 
 ### Data Loading
 
