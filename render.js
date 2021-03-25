@@ -77,9 +77,7 @@ var PARAM_MANY_SEEDS = false;
 var CANVAS;
 var GRAPH;
 var PNODES;
-var LINKNODES;
 var SCALARFIELD;
-var TIMEFIELD;
 
 var SVG_PERSON_CIRCLES;
 var SVG_NODE_CIRCLES;
@@ -112,10 +110,7 @@ var SVG_DRAGABLE_ELEMENTS;
 function createForceGraph(json)
 {
     //  DATA INITIALIZATION
-	LINKNODES = [];
-	RANGENODES = [];
-	RANGE_LINES = [];  
-    NODES = [];
+	NODES = [];
 	LINKS = [];
 	
 	
