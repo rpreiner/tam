@@ -76,7 +76,6 @@ var PARAM_MANY_SEEDS = false;
 
 var CANVAS;
 var GRAPH;
-var PNODES;
 var SCALARFIELD;
 
 var SVG_PERSON_CIRCLES;
@@ -175,14 +174,12 @@ function createForceGraph(json)
 	REPULSION_FORCE = d3.forceManyBody().strength(-PARAM_REPULSION_STRENGTH);
 	LINK_FORCE = d3.forceLink(LINKS).distance(function(d){ return d.distance; }).strength(PARAM_LINK_STRENGTH);
 		
-	PNODES = NODES;
-
 	FORCE_SIMULATION = d3.forceSimulation(NODES)
 		.force("charge", REPULSION_FORCE)
 		.force("x", d3.forceX(0).strength(PARAM_GRAVITY_X)) 
 		.force("y", d3.forceY(0).strength(PARAM_GRAVITY_Y)) 
 		.force("link", LINK_FORCE)
-		.force("similarity", function(alpha){ similarityForce(PNODES, alpha) })
+		.force("similarity", function(alpha){ similarityForce(NODES, alpha) })
 		.force("collision", d3.forceCollide().radius(function(d){ return 3 * d.r; }))
 		.velocityDecay(PARAM_FRICTION)		// friction since d3.v4
 		.alpha(PARAM_ALPHA)
