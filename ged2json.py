@@ -46,12 +46,17 @@ with open(args.gedcom, encoding='utf8') as f:
         elif "1 WIFE " in line:
             wife = line[7:].strip()
         elif "1 CHIL " in line:
-            nodesWithFamily.append(husb)
-            nodesWithFamily.append(wife)
-            link = {"source" : husb, "target" : line[7:].strip() , "directed": True}
-            res["links"].append(link)
-            link = {"source" : wife, "target" : line[7:].strip(), "directed": True}
-            res["links"].append(link)
+            if husb is not "":
+                nodesWithFamily.append(husb)
+                link = {"source" : husb, "target" : line[7:].strip() , "directed": True}
+                res["links"].append(link)
+            if wife is not "":
+                nodesWithFamily.append(wife)
+                link = {"source" : wife, "target" : line[7:].strip(), "directed": True}
+                res["links"].append(link)
+        elif "0 " in line and " FAM" in line:
+            husb = ""
+            wife = ""
 
 nodesWithoutParents = []
 for oneNode in res["nodes"]:
