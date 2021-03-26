@@ -24,12 +24,14 @@ with open(args.gedcom, encoding='utf8') as f:
     node = {}
     husb = ""
     wife = ""
+    idsWithNodes = []
     for i in range(len(lines)):
         line = lines[i]
         if " INDI" in line:
             if "id" in node:
                 if "value" in node:
                     res["nodes"].append(node)
+                    idsWithNodes.append(node["id"])
                 else:
                     print("skipping yearless " + node["id"] + ": " + node["name"])
             lineParts = line.split()
@@ -43,19 +45,27 @@ with open(args.gedcom, encoding='utf8') as f:
                 node["value"] =  match.group(1)
         elif "1 HUSB " in line:
             husb = line[7:].strip()
+            if husb not in idsWithNodes:
+                husb = ""
         elif "1 WIFE " in line:
             wife = line[7:].strip()
+            if wife not in idsWithNodes:
+                wife = ""
         elif "1 CHIL " in line:
             child = line[7:].strip()
-            if husb is not "":
+            childWasAdded = False
+            if husb is not "" and child in idsWithNodes:
                 nodesWithFamily.append(husb)
                 link = {"source" : husb, "target" : child, "directed": True}
                 res["links"].append(link)
-            if wife is not "":
+                childWasAdded = True
+            if wife is not "" and child in idsWithNodes:
                 nodesWithFamily.append(wife)
                 link = {"source" : wife, "target" : child, "directed": True}
                 res["links"].append(link)
-            nodesWithFamily.append(child)
+                childWasAdded = True
+            if childWasAdded is True:
+                nodesWithFamily.append(child)
         elif "0 " in line and " FAM" in line:
             husb = ""
             wife = ""
@@ -64,9 +74,6 @@ nodesWithoutParents = []
 for oneNode in res["nodes"]:
     if oneNode["id"] not in nodesWithFamily:
         nodesWithoutParents.append(oneNode)
-    else:
-        print("has family " + oneNode["id"] + ": " + oneNode["name"])
-        
 
 for orphanNode in nodesWithoutParents:
     print ("removing orphan " + orphanNode["id"] + ": " + orphanNode["name"])
