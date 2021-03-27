@@ -54,12 +54,12 @@ with open(args.gedcom, encoding='utf8', errors='ignore') as f:
         elif "1 CHIL " in line:
             child = line[7:].strip()
             childWasAdded = False
-            if husb is not "" and child in idsWithNodes:
+            if husb != "" and child in idsWithNodes:
                 nodesWithFamily.append(husb)
                 link = {"source" : husb, "target" : child, "directed": True}
                 res["links"].append(link)
                 childWasAdded = True
-            if wife is not "" and child in idsWithNodes:
+            if wife != "" and child in idsWithNodes:
                 nodesWithFamily.append(wife)
                 link = {"source" : wife, "target" : child, "directed": True}
                 res["links"].append(link)
