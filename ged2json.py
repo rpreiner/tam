@@ -42,7 +42,7 @@ with open(args.gedcom, encoding='utf8', errors='ignore') as f:
             birthRow = lines[i+1]
             match = re.match(r'.*([1-3][0-9]{3})', birthRow)
             if match is not None:
-                node["value"] =  match.group(1)
+                node["value"] = int(match.group(1))
         elif "1 HUSB " in line:
             husb = line[7:].strip()
             if husb not in idsWithNodes:
