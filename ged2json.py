@@ -19,7 +19,7 @@ res = {}
 res["nodes"] = []
 res["links"] = []
 
-with open(args.gedcom, encoding='utf8') as f:
+with open(args.gedcom, encoding='utf8', errors='ignore') as f:
     lines = f.readlines()
     node = {}
     husb = ""
@@ -76,7 +76,10 @@ for oneNode in res["nodes"]:
         nodesWithoutParents.append(oneNode)
 
 for orphanNode in nodesWithoutParents:
-    print ("removing orphan " + orphanNode["id"] + ": " + orphanNode["name"])
+    try:
+        print ("removing orphan " + orphanNode["id"] + ": " + orphanNode["name"])
+    except:
+        print ("removing orphan " + orphanNode["id"] + " which cannot be displayed properly")
     res["nodes"].remove(orphanNode)
 
 with open(args.json, 'w', encoding="utf8") as outfile:
