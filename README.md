@@ -35,6 +35,7 @@ Use the mousewheel to zoom in or zoom out and click-and-drag to pan the viewport
 
 ### Use your own GEDCOM file
 After [downloading and installing python](https://www.python.org/downloads/) you can use the command line script ged2json.py to convert a GEDCOM file into a JSON file:
+
     python ged2json <GEDCOM file> <JSON file>
 	
 In order only to have valid JSON entries for TAM the GEDCOM records will be filtered. 
