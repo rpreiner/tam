@@ -23,10 +23,10 @@ This age is defined in the ``PARAM_PROCREATION_AGE`` parameter at the end of ind
 
 The force-layout and TAM parameters are set by default to produce the following TAMs of Marie Antoinette:
 
-<table border='0'><tr><td>
-	<img align="center" src="/images/marie-antoinette.png" width="400">
+<table cellspacing="0" cellpadding="0" style="border:none"><tr><td>
+	<img align="center" src="/images/marie-antoinette.png" height="400">
 </td><td>
-	<img align="center" src="/images/marie-antoinette-2.png" width="400">
+	<img align="center" src="/images/marie-antoinette-2.png" height="400">
 </td></tr></table>
 
 Left: MA.json, right: MA.ged
