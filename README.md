@@ -34,8 +34,12 @@ Use the 'I' key or the menu switch to activate contour hilighting on mouse-over.
 Use the mousewheel to zoom in or zoom out and click-and-drag to pan the viewport.
 
 ### Use your own GEDCOM file
-After [downloading and installing python](https://www.python.org/downloads/) you can use the command line script ged2json.py to convert a GEDCOM file 
-into a JSON file. With this JSON file you can replace the file MA.json in the data directory. Then
-just reload index.htm in order to see the persons from the GEDCOM file. Since TAM only is a 
+After [downloading and installing python](https://www.python.org/downloads/) you can use the command line script ged2json.py to convert a GEDCOM file into a JSON file:
+	python ged2json <GEDCOM file> <JSON file>
+In order only to have valid JSON entries for TAM the GEDCOM records will be filtered. 
+Records that do not state at least a year of birth as well as parents or children are obmitted.
+
+Use the generated JSON file to replace the file MA.json in the data directory. Then just reload index.htm 
+in your browser in order to see the persons from the GEDCOM file. Since TAM only is a 
 demonstration the performance and the user experience can decrease dramatically when using files with
 too many records in them.
