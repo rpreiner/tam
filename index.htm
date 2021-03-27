@@ -11,18 +11,17 @@
 
 <html>
 <head>
-	
 	<meta charset="utf-8">
-	<title>TAM Graph</title>
+	<title>Topographic Family Map</title>
 	
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<!--<script src="d3.v5.min.js"></script>-->
+	<script src="gedcom.js"></script>
 	<script src="scalarfield.js"></script>
 	<script src="interaction.js"></script>
+	<script src="TAMrenderer.js"></script>
+	<script src="TFMrenderer.js"></script>
 	<script src="utils.js"></script>
-	<script src="render.js"></script>
-	<script src="tam.js"></script>
-		
 	<link rel="stylesheet" type="text/css" href="tam.css"> 
 </head>
 
@@ -34,10 +33,10 @@
 			<table border="0" cellpadding="0" cellspacing="1">
 			<tr>
 				<td class="paramlabel" nowrap>Gravity X:</td>
-				<td class="param"><input type="number" id="settings_gravity_x" step="0.01" value="0.1" class="paramspinbox"></td>
+				<td class="param"><input type="number" id="settings_gravity_x" min="0" step="0.01" value="0.1" class="paramspinbox"></td>
 			</tr><tr>
 				<td class="paramlabel" nowrap>Gravity Y:</td>
-				<td class="param"><input type="number" id="settings_gravity_y" step="0.01" value="0.1" class="paramspinbox"></td>
+				<td class="param"><input type="number" id="settings_gravity_y" min="0" step="0.01" value="0.1" class="paramspinbox"></td>
 			</tr><tr>
 				<td class="paramlabel" nowrap>Repulsion Strength:</td>
 				<td class="param"><input type="number" id="settings_repulsion_strength" min="0" step="1" value="2000" class="paramspinbox"></td>
@@ -86,7 +85,7 @@
 				<td class="paramlabel" nowrap>Show Tunnels</td>
 				<td class="param"><label class="switch"><input id="settings_show_tunnels" type="checkbox"><span class="slider"></span></label></td>
 			</tr><tr>
-				<td class="paramlabel" nowrap>Dilation Degree</td>
+				<td class="paramlabel" nowrap>Dilation Degree:</td>
 				<td class="param"><input type="number" id="settings_dilation_degree"  min="0" max="100" step="1" value="1" class="paramspinbox"></td>
 			</tr><tr>
 				<td class="paramlabel" nowrap>Node Radius:</td>
@@ -164,12 +163,32 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///  DATA LOADING
 
-
 var folder = "data";
 
-var PARAM_FILENAME = "MA.json"
 
-d3.json(folder + "/" + PARAM_FILENAME).then(createForceGraph);
+// default view
+//var PARAM_FILENAME = "MA.json";  
+
+// gedcom view with family circles
+var PARAM_FILENAME = "MA.ged";  
+
+var PARAM_PROCREATION_AGE = 20;
+
+
+if (PARAM_FILENAME.endsWith(".json")) {
+	var renderer = new TAMRenderer();
+	d3.json(folder + "/" + PARAM_FILENAME).then(function(json){ renderer.createForceGraphJSON(json) });
+}
+else if (PARAM_FILENAME.endsWith(".ged")) {
+	var renderer = new TFMRenderer();
+	loadGedcom(folder + "/" + PARAM_FILENAME, function(gedcom){ 
+	
+		estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
+		
+		renderer.createFamilyForceGraph(gedcom);
+	});
+}
+	
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
