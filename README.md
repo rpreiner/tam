@@ -12,12 +12,15 @@ Make sure the security settings of your browser allow reading local files. (abou
 
 ### Data Loading
 
-The file to be loaded is specified in the ``PARAM_FILENAME`` parameter at the end of index.htm. Two views are possible:
+For static loading, the file to be loaded is specified in the ``PARAM_FILENAME`` parameter at the end of index.htm. 
+The file can now also be dynamically loaded using a file chooser (thanks to Idefix!).
 
-If the graph data is provided in JSON format, a TAM view for general graphs is created.
+Two file types and corresponding TAM views are possible:
+
+If the graph is provided in **JSON** format, a TAM view for general graphs is created.
 See the default example in 'data/MA.json' to see how to specify an attributed graph. 
 
-If the graph is provided in GEDCOM format, a specific ancestry graph view is created that compacts siblings into family circles. 
+If the graph is provided in **GEDCOM** format, a specific ancestry graph view is created that compacts siblings into family circles. 
 Note that if birth dates are missing for persons in the graph, they are estimated based on their relatives according to an assumed procreation age.
 This age is defined in the ``PARAM_PROCREATION_AGE`` parameter at the end of index.htm.
 
