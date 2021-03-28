@@ -13,7 +13,7 @@ Make sure the security settings of your browser allow reading local files. (abou
 ### Data Loading
 
 For static loading, the file to be loaded is specified in the ``PARAM_FILENAME`` parameter at the end of index.htm. 
-The file can now also be dynamically loaded using a file chooser (thanks to Idefix!).
+The file can now also be dynamically loaded by the user using a file chooser (thanks to Idefix!).
 
 Two file types and corresponding TAM views are possible:
 
