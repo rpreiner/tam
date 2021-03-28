@@ -22,11 +22,22 @@
 	<script src="TAMrenderer.js"></script>
 	<script src="TFMrenderer.js"></script>
 	<script src="utils.js"></script>
+	<script src="openFile.js"></script>
 	<link rel="stylesheet" type="text/css" href="tam.css"> 
 </head>
 
 <body>
 	<div id="menubar">
+		<fieldset>
+			<legend>File Chooser</legend>
+			<table border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="paramlabel" nowrap>
+					<input style="width:157" type="file" id="file-input" onchange="readSingleFile(event)" />
+				</td>
+			</tr>
+			</table>
+		</fieldset>
 		<!-------------------------------------------------------------------------------------->
 		<fieldset>
 			<legend>Graph Layout</legend>
