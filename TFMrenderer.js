@@ -410,11 +410,14 @@ class TFMRenderer extends TAMRenderer
 			var SEGMENTS = [];
 			this.FAMILYLINKS.forEach(link =>
 			{
-				//--- determine 2D start and endpoint on map, respecting some offsets
-				var pv0 = new vec(link.source.vis.x, link.source.vis.y, link.source.value);
-				var pv1 = new vec(link.target.vis.x, link.target.vis.y, link.target.value);
+				if (link.source.value && link.target.value)
+				{
+					// determine 2D start and endpoint on map, respecting some offsets
+					var pv0 = new vec(link.source.vis.x, link.source.vis.y, link.source.value);
+					var pv1 = new vec(link.target.vis.x, link.target.vis.y, link.target.value);
 				
-				SEGMENTS.push({ 'pv0': pv0, 'pv1': pv1, 'directed': true, 'r1': link.target.r });
+					SEGMENTS.push({ 'pv0': pv0, 'pv1': pv1, 'directed': true, 'r1': link.target.r });
+				}
 			});
 			
 			// create tunnels

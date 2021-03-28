@@ -1,4 +1,4 @@
-<!--///////////////////////////////////////////////////////////////////////////////
+﻿<!--///////////////////////////////////////////////////////////////////////////////
 //
 // Topographic Attribute Maps Demo
 // Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
@@ -12,7 +12,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Topographic Family Map</title>
+	<title>Topographic Attribute Map</title>
 	
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<!--<script src="d3.v5.min.js"></script>-->
@@ -31,121 +31,151 @@
 		<fieldset>
 			<legend>File Chooser</legend>
 			<table border="0" cellpadding="0" cellspacing="1">
-			<tr>
-				<td class="paramlabel" nowrap>
-					<input style="width:157" type="file" id="file-input" onchange="readSingleFile(event)" />
-				</td>
-			</tr>
+				<tr>
+					<td style="padding-right:4px" nowrap>
+						<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event)" />
+						<input class="filelabel" type="text" id="filename" readonly="true" />
+					</td>
+					<td>
+						<input type="button" style="border:1px solid gray" value="&nbsp;...&nbsp;" id="fakeBrowse" onclick="document.getElementById('browse').click()" />
+					</td>
+				</tr>
 			</table>
 		</fieldset>
 		<!-------------------------------------------------------------------------------------->
 		<fieldset>
 			<legend>Graph Layout</legend>
-			<table border="0" cellpadding="0" cellspacing="1">
-			<tr>
-				<td class="paramlabel" nowrap>Gravity X:</td>
-				<td class="param"><input type="number" id="settings_gravity_x" min="0" step="0.01" value="0.1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Gravity Y:</td>
-				<td class="param"><input type="number" id="settings_gravity_y" min="0" step="0.01" value="0.1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Repulsion Strength:</td>
-				<td class="param"><input type="number" id="settings_repulsion_strength" min="0" step="1" value="2000" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Link Strength:</td>
-				<td class="param"><input type="number" id="settings_link_strength" min="0" step="0.1" value="2" class="paramspinbox"></td>
-			</tr>
-				<td class="paramlabel" nowrap>Similarity Strength:</td>
-				<td class="param"><input type="number" id="settings_simforce_strength" min="0" step="0.1" value="1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel">Friction:</td>
-				<td class="param"><input type="number" id="settings_friction" min="0.0" max="1.0" step="0.1" value="0.0" class="paramspinbox"></td>
-			</tr>
+			<table class="menu" border="0" cellpadding="0" cellspacing="1">
+				<tbody>
+					<tr>
+						<td class="paramlabel" nowrap>Gravity X:</td>
+						<td class="param"><input type="number" id="settings_gravity_x" min="0" step="0.01" value="0.1" class="paramspinbox"></td>
+					</tr>
+					<tr>
+						<td class="paramlabel" nowrap>Gravity Y:</td>
+						<td class="param"><input type="number" id="settings_gravity_y" min="0" step="0.01" value="0.1" class="paramspinbox"></td>
+					</tr>
+					<tr>
+						<td class="paramlabel" nowrap>Repulsion Strength:</td>
+						<td class="param"><input type="number" id="settings_repulsion_strength" min="0" step="1" value="2000" class="paramspinbox"></td>
+					</tr>
+					<tr>
+						<td class="paramlabel" nowrap>Link Strength:</td>
+						<td class="param"><input type="number" id="settings_link_strength" min="0" step="0.1" value="2" class="paramspinbox"></td>
+					</tr>
+					<tr>
+						<td class="paramlabel" nowrap>Similarity Strength:</td>
+						<td class="param"><input type="number" id="settings_simforce_strength" min="0" step="0.1" value="1" class="paramspinbox"></td>
+					</tr>
+					<tr>
+						<td class="paramlabel">Friction:</td>
+						<td class="param"><input type="number" id="settings_friction" min="0.0" max="1.0" step="0.1" value="0.0" class="paramspinbox"></td>
+					</tr>
+				</tbody>
 			</table>
 		</fieldset>
-
 		<!-------------------------------------------------------------------------------------->
 		<fieldset>
 			<legend>Visual Mapping</legend>
-			<table border="0" cellpadding="0" cellspacing="1">
-			<tr>
-				<td class="paramlabel" nowrap>Reverse Colormap</td>
-				<td class="param"><label class="switch"><input id="settings_reversecolor" type="checkbox"><span class="slider"></span></label></td>
-			<tr>
-				<td class="paramlabel" nowrap>Interpolate NN</td>
-				<td class="param"><label class="switch"><input id="settings_interpolation_type" type="checkbox"><span class="slider"></span></label></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Show Contours</td>
-				<td class="param"><label class="switch"><input id="settings_show_contours" type="checkbox"><span class="slider"></span></label></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Show Graph</td>
-				<td class="param"><label class="switch"><input id="settings_show_graph" type="checkbox"><span class="slider"></span></label></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Show Links</td>
-				<td class="param"><label class="switch"><input id="settings_show_links" type="checkbox"><span class="slider"></span></label></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Enable Shading</td>
-				<td class="param"><label class="switch"><input id="settings_shading" type="checkbox"><span class="slider"></span></label></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Show Names</td>
-				<td class="param"><label class="switch"><input id="settings_show_names" type="checkbox"><span class="slider"></span></label></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Embed Links</td>
-				<td class="param"><label class="switch"><input id="settings_embed_links" type="checkbox"><span class="slider"></span></label></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Show Tunnels</td>
-				<td class="param"><label class="switch"><input id="settings_show_tunnels" type="checkbox"><span class="slider"></span></label></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Dilation Degree:</td>
-				<td class="param"><input type="number" id="settings_dilation_degree"  min="0" max="100" step="1" value="1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Node Radius:</td>
-				<td class="param"><input type="number" id="settings_noderadius" min="1" max="100" step="1" value="15" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Person Label Opacity:</td>
-				<td class="param"><input type="number" id="settings_pnodeopacity" min="0.0" max="1.0" step="0.1" value="1.0" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Link Width:</td>
-				<td class="param"><input type="number" id="settings_linkwidth" min="1" max="20" step="1" value="6" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Min Range Value:</td>
-				<td class="param"><input type="number" id="settings_range_min" value="1750" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Max Range Value:</td>
-				<td class="param"><input type="number" id="settings_range_max" value="2020" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Contour Step:</td>
-				<td class="param"><input type="number" id="settings_contour_step" min="0" step="0.1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Big Contour Step:</td>
-				<td class="param"><input type="number" id="settings_contour_big_step" min="0" step="0.1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Indicator Size</td>
-				<td class="param"><input type="number" id="settings_indicator_size" min="0" step="1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Height Scale:</td>
-				<td class="param"><input type="number" id="settings_height_scale" min="0" max="100" value="80" step="1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Resolution:</td>
-				<td class="param"><input type="number" id="settings_resolution" min="10" max="5000" value="500" step="1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Link Sample Step:</td>
-				<td class="param"><input type="number" id="settings_link_sample_step" min="1" step="1" class="paramspinbox"></td>
-			</tr><tr>
-				<td class="paramlabel" nowrap>Underground Thresh:</td>
-				<td class="param"><input type="number" id="settings_underground_threshold" min="0" step="0.1" class="paramspinbox"></td>
-			</tr>
+			<table class="menu" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+					<td class="paramlabel" nowrap>Reverse Colormap</td>
+					<td class="param"><label class="switch"><input id="settings_reversecolor" type="checkbox"><span class="slider"></span></label></td>
+				<tr>
+					<td class="paramlabel" nowrap>Interpolate NN</td>
+					<td class="param"><label class="switch"><input id="settings_interpolation_type" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Show Contours</td>
+					<td class="param"><label class="switch"><input id="settings_show_contours" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Show Graph</td>
+					<td class="param"><label class="switch"><input id="settings_show_graph" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Show Links</td>
+					<td class="param"><label class="switch"><input id="settings_show_links" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Enable Shading</td>
+					<td class="param"><label class="switch"><input id="settings_shading" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Show Names</td>
+					<td class="param"><label class="switch"><input id="settings_show_names" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Embed Links</td>
+					<td class="param"><label class="switch"><input id="settings_embed_links" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Show Tunnels</td>
+					<td class="param"><label class="switch"><input id="settings_show_tunnels" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Dilation Degree:</td>
+					<td class="param"><input type="number" id="settings_dilation_degree" min="0" max="100" step="1" value="1" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Node Radius:</td>
+					<td class="param"><input type="number" id="settings_noderadius" min="1" max="100" step="1" value="15" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Person Label Opacity:</td>
+					<td class="param"><input type="number" id="settings_pnodeopacity" min="0.0" max="1.0" step="0.1" value="1.0" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Link Width:</td>
+					<td class="param"><input type="number" id="settings_linkwidth" min="1" max="20" step="1" value="6" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Min Range Value:</td>
+					<td class="param"><input type="number" id="settings_range_min" value="1750" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Max Range Value:</td>
+					<td class="param"><input type="number" id="settings_range_max" value="2020" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Contour Step:</td>
+					<td class="param"><input type="number" id="settings_contour_step" min="0" step="0.1" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Big Contour Step:</td>
+					<td class="param"><input type="number" id="settings_contour_big_step" min="0" step="0.1" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Indicator Size</td>
+					<td class="param"><input type="number" id="settings_indicator_size" min="0" step="1" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Height Scale:</td>
+					<td class="param"><input type="number" id="settings_height_scale" min="0" max="100" value="80" step="1" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Resolution:</td>
+					<td class="param"><input type="number" id="settings_resolution" min="10" max="5000" value="500" step="1" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Link Sample Step:</td>
+					<td class="param"><input type="number" id="settings_link_sample_step" min="1" step="1" class="paramspinbox"></td>
+				</tr>
+				<tr>
+					<td class="paramlabel" nowrap>Underground Thresh:</td>
+					<td class="param"><input type="number" id="settings_underground_threshold" min="0" step="0.1" class="paramspinbox"></td>
+				</tr>
 			</table>
 		</fieldset>
 
 		<!-------------------------------------------------------------------------------------->
 		<fieldset>
 			<legend>Interaction</legend>
-			<table border="0" cellpadding="0" cellspacing="1">
-			<tr>
-				<td class="paramlabel" nowrap>Highlight Contour</td>
-				<td class="param"><label class="switch"><input id="settings_select_time" type="checkbox"><span class="slider"></span></label></td>
-			</tr>
+			<table class="menu" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+					<td class="paramlabel" nowrap>Highlight Contour</td>
+					<td class="param"><label class="switch"><input id="settings_select_time" type="checkbox"><span class="slider"></span></label></td>
+				</tr>
 			</table>
 		</fieldset>
 
@@ -200,7 +230,6 @@ else if (PARAM_FILENAME.endsWith(".ged")) {
 	});
 }
 	
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 </script>

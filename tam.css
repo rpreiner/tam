@@ -17,15 +17,15 @@ body {
 /* ######################### SVG Canvas ######################### */
 
 #canvas {
-  margin-left: 200px;
-  height: 100%;
-  vertical-align: top;
-  overflow: hidden;
+	margin-left: 200px;
+	height: 100%;
+	vertical-align: top;
+	overflow: hidden;
 }
 
 #tam {
-width: 100%;
-height: 100%;
+	width: 100%;
+	height: 100%;
 }	
 
 /*.shadingContours {
@@ -34,19 +34,40 @@ mix-blend-mode: multiply;
 
 /* ######################### Menu Bar ######################### */
 
-td.paramlabel{
-  width: 110px;
-  padding: 0px 15px 3px 0px
+table.menu {
+	table-layout: fixed;
+	border-collapse: collapse;
+	width: 100%;
+	max-width: 155px;
 }
 
-td.param{
-  padding: 0px 0px 3px 0px;
+td.paramlabel {
+	width: 110px;
+	padding: 0px 15px 3px 0px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+input.filelabel {
+	width: 145px;
+	background: #eee;
+	padding: 2pt;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size:9pt;
+}
+
+td.param {
+	padding: 0px 0px 3px 5px;
+	width: 45px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-align: right;
 }
 
 .paramspinbox {
-  width: 45px; 
-  text-align: right;
-  font-size: 9pt;
+	width: 45px; 
+	text-align: right;
+	font-size: 9pt;
 }
 
 #menubar {
@@ -72,7 +93,7 @@ td.param{
 
 #menubar button {
     background: transparent;
-	  border-radius: 15em;
+	 border-radius: 15em;
     border: 2px solid transparent;
     box-sizing: border-box;
     cursor: pointer;
@@ -84,14 +105,14 @@ td.param{
     text-decoration: none;
     display: inline-block;
     outline: none;
-	  background:#10bc98;
-	  color:#fff;	
-	  box-shadow: 0 3px 0 #0c8d72;
+	background:#10bc98;
+	color:#fff;	
+	box-shadow: 0 3px 0 #0c8d72;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
     -webkit-transition: all 0.2s ease-in-out 0s;
     -moz-transition: all 0.2s ease-in-out 0s;
     -ms-transition: all 0.2s ease-in-out 0s;
-     transition: all 0.2s ease-in-out 0s;
+    transition: all 0.2s ease-in-out 0s;
 }
 
 #menubar button:hover{
@@ -103,56 +124,56 @@ td.param{
 }
 
 #menubar .switch {
-  position: relative;
-  display: inline-block;
-  width: 36px;
-  height: 22px;
+	position: relative;
+	display: inline-block;
+	width: 34px;
+	height: 20px;
 }
 
 #menubar .switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+	opacity: 0;
+	width: 0;
+	height: 0;
 }
 
 #menubar .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .2s;
-  transition: .2s;
-  border-radius: 20px;
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: .2s;
+	transition: .2s;
+	border-radius: 20px;
 }
 
 #menubar .slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  -webkit-transition: .2s;
-  transition: .2s;
-  border-radius: 50%;
+	position: absolute;
+	content: "";
+	height: 14px;
+	width: 14px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	-webkit-transition: .2s;
+	transition: .2s;
+	border-radius: 50%;
 }
 
 #menubar input:checked + .slider {
-  background-color: #2196F3;
+	background-color: #4fc46f; /*#34c759*/
 }
 
 #menubar input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+	box-shadow: 0 0 1px #4fc46f; /*#34c759*/
 }
 
 #menubar input:checked + .slider:before {
-  -webkit-transform: translateX(14px);
-  -ms-transform: translateX(14px);
-  transform: translateX(14px);
+	-webkit-transform: translateX(14px);
+	-ms-transform: translateX(14px);
+	transform: translateX(14px);
 }
 
 #menubar fieldset {

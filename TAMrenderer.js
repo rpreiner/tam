@@ -470,11 +470,14 @@ class TAMRenderer
 			var SEGMENTS = [];
 			this.LINKS.forEach(link =>
 			{
-				//--- determine 2D start and endpoint on map, respecting some offsets
-				var pv0 = new vec(link.source.x, link.source.y, link.source.value);
-				var pv1 = new vec(link.target.x, link.target.y, link.target.value);
-				
-				SEGMENTS.push({ 'pv0': pv0, 'pv1': pv1, 'directed': link.directed, 'r1': link.target.r });
+				if (link.source.value && link.target.value)
+				{
+					// determine 2D start and endpoint on map, respecting some offsets
+					var pv0 = new vec(link.source.x, link.source.y, link.source.value);
+					var pv1 = new vec(link.target.x, link.target.y, link.target.value);
+
+					SEGMENTS.push({ 'pv0': pv0, 'pv1': pv1, 'directed': link.directed, 'r1': link.target.r });
+				}
 			});
 			
 			// create tunnels

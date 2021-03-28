@@ -1,3 +1,9 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// File open functionality added by Idefix2020 
+//
+///////////////////////////////////////////////////////////////////////////////
+
 function resetSVGLayers() {
   d3.select("#topolayer").remove();
   d3.select("#shadinglayer").remove();
@@ -32,4 +38,14 @@ function readSingleFile(e) {
     }
   };
   reader.readAsDataURL(file);
+}
+
+
+// Wrapper by rp
+function Handlechange(event) {
+    var fileinput = document.getElementById("browse");
+    var textinput = document.getElementById("filename");
+    textinput.value = fileinput.value;
+
+    readSingleFile(event);
 }
