@@ -42,10 +42,10 @@ function readSingleFile(e) {
 
 
 // Wrapper by rp
-function Handlechange(event) {
+function onChangeFile(event) {
     var fileinput = document.getElementById("browse");
     var textinput = document.getElementById("filename");
-    textinput.value = fileinput.value;
+    textinput.value = fileinput.files[0].name;
 
     readSingleFile(event);
 }

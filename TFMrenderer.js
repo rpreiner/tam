@@ -70,7 +70,9 @@ class TFMRenderer extends TAMRenderer
 			
 			// compute value of this node
 			if (f.children.length == 0) {
-				f.value = (f.husband && f.wife && f.husband.bdate && f.wife.bdate) ? Math.trunc((f.husband.bdate.getFullYear() + f.wife.bdate.getFullYear()) / 2) : null;
+				f.value = null;
+				if (f.husband && f.husband.bdate) f.value = f.husband.bdate.getFullYear();
+				if (f.wife && f.wife.bdate && f.wife.bdate.getFullYear() > f.value) f.value = f.wife.bdate.getFullYear();
 			}
 			else {
 				f.value = 1e20;
@@ -170,11 +172,14 @@ class TFMRenderer extends TAMRenderer
 
 			f.children.forEach(c => 
 			{
+				// determine distance of child from family center for visualization of age differences
 				c.fnodedist = familyDefaultRadius * 0.5;
 				if (c.bdate) c.fnodedist += (c.bdate.getFullYear() - f.value) * PARAM_RANGE_UNIT_LEN;
+
+				// faimly circle radius has to encompass all childs
 				f.r = Math.max(f.r, c.fnodedist);
 				
-				var link = { "source": f, "target": c, "distance": c.fnodedist };
+				var link = { "source": f, "target": c, "distance": PARAM_LINK_DISTANCE / 2 };	// division by 2 since there are two segments between family nodes
 				LINKS.push(link);
 
 				c.parentFamily = f;
@@ -189,36 +194,9 @@ class TFMRenderer extends TAMRenderer
 			if (f.wife) sources.push(f.wife);
 			sources.forEach(source => 
 			{
-				// compute suitable distance for this source
-				var parentLinkDistance = (10 + f.children.length) * PARAM_NODE_RADIUS;
-				
-				//if (source.parentFamily) 
-				//	parentLinkDistance += source.parentFamily.r - source.fnodedist;	// dist from node to parent circle border;
-				
-				var target = f;
-
-				// Weak subdivision links creating control points for connective spline between source and target
-				const nSegments = 1;
-				const sublinkDistance = (parentLinkDistance - f.r) / nSegments;
-				const value_step = (target.value - source.value) / nSegments;
-				var last_subnode = source;
-				
-				for (var i = 1, subvalue = source.value + value_step; i < nSegments; i++, subvalue += value_step, last_subnode = subnode)
-				{
-					var subnode = { 'type': "LINKNODE", 'value': subvalue };
-					this.LINKNODES.push(subnode);
-					
-					var link = { "source": last_subnode, "target": subnode, "distance": sublinkDistance };
-					LINKS.push(link);
-					this.FAMILYLINKS.push(link);
-				}
-				// last sublink is longer to account for family circle radius
-				var link = { "source": last_subnode, "target": target, "distance": sublinkDistance + f.r }
+				var link = { "source": source, "target": f, "distance": PARAM_LINK_DISTANCE*0.8 + f.r }
 				LINKS.push(link);
 				this.FAMILYLINKS.push(link);
-
-				// Strong main link driving the connective force between source and target
-				//LINKS.push({ "source": source, "target": target, "distance": parentLinkDistance });
 			})
 		});
 	}
@@ -234,7 +212,8 @@ class TFMRenderer extends TAMRenderer
 			
 		
 		// set visualization positions of persons by pushing them back into their parent family circle
-		this.SVG_NODE_CIRCLES.each(p => {
+		this.SVG_NODE_CIRCLES.each(p =>
+		{
 			if (p.parentFamily) 
 			{
 				if (p.parentFamily.children.length == 1) {

@@ -59,20 +59,36 @@ function setTAMInteractions()
 				toggleReverseColormap();
 				d3.select("#settings_reversecolor").property('checked', PARAM_REVERSE_COLORMAP);
 			}
-			else if (d3.event.keyCode == "I".charCodeAt(0)) {
+			else if (d3.event.keyCode == "H".charCodeAt(0)) {
 				toggleSelectTime();
 				d3.select("#settings_select_time").property('checked', PARAM_USE_MOUSEOVER);
 			}
-			else if (d3.event.keyCode == "E".charCodeAt(0)) {
+			else if (d3.event.keyCode == "F".charCodeAt(0)) {
 				toggleEnergizeSimulation();
+				d3.select("#settings_freeze").property('checked', !PARAM_ENERGIZE);
+			}
+			else if (d3.event.keyCode == "N".charCodeAt(0)) {
+				toggleNames();
+				d3.select("#settings_show_names").property('checked', PARAM_SHOW_NAMES);
 			}
 			else if(d3.event.keyCode == "G".charCodeAt(0)) {
 				toggleShowGraph();
 				d3.select("#settings_show_graph").property('checked', PARAM_SHOW_GRAPH);
 			}
+			else if (d3.event.keyCode == "M".charCodeAt(0)) {
+				toggleShowContours();
+				d3.select("#settings_show_contours").property('checked', PARAM_SHOW_CONTOURS);
+			}
 			else if (d3.event.keyCode == "L".charCodeAt(0)) {
 				toggleLinks();
+				d3.select("#settings_show_links").property('checked', PARAM_SHOW_LINKS);
 			}
+			else if (d3.event.keyCode == "T".charCodeAt(0)) {
+				toggleShowTunnels();
+				d3.select("#settings_show_tunnels").property('checked', PARAM_SHOW_TUNNELS);
+			}
+
+			settings_show_tunnels
 		});
 	
 	// make nodes draggable
@@ -174,6 +190,12 @@ function toggleNames()
 		renderer.showNames();
 	else
 		renderer.hideNames();
+}
+//---------------------------------------------------------------------------
+function toggleShowTunnels()
+{
+	PARAM_SHOW_TUNNELS = !PARAM_SHOW_TUNNELS;
+	if (!PARAM_ENERGIZE) renderer.updateScalarField();
 }
 //---------------------------------------------------------------------------
 function toggleReverseColormap() 
@@ -307,9 +329,8 @@ function setMenubarInteractions()
 		PARAM_INDICATOR_FONTSIZE = this.value;
 		if (renderer.SVG_INDICATOR_LABELS) renderer.SVG_INDICATOR_LABELS.style("font-size", PARAM_INDICATOR_FONTSIZE);
 	});
-	d3.select("#settings_show_tunnels").on("input", function() {
-		PARAM_SHOW_TUNNELS = !PARAM_SHOW_TUNNELS;
-		if (!PARAM_ENERGIZE) renderer.updateScalarField();
+	d3.select("#settings_show_tunnels").on("input", function () {
+		toggleShowTunnels();
 	});
 	d3.select("#settings_show_contours").on("input", function() {
 		toggleShowContours();
@@ -328,6 +349,9 @@ function setMenubarInteractions()
 	});	
 	d3.select("#settings_select_time").on("click", function(e){
 		toggleSelectTime();
+	});	
+	d3.select("#settings_freeze").on("click", function (e) {
+		toggleEnergizeSimulation();
 	});		
 	d3.select("#settings_range_min").on("input", function() {
 		PARAM_RANGE_MIN = parseFloat(this.value);

@@ -37,10 +37,10 @@ Left: MA.json, right: MA.ged
 Initially the D3 force layout can be interactively modified by picking and pulling individual nodes 
 and by using the force strength controls in the menu.
 
-Use the 'E' key to freeze the current force layout and compute the underlying TAM. Use the 'E' key 
-again to unfreeze and re-energize the layout simulation. While freezed, individual nodes can still 
+Use the 'F' key or the menu switch to freeze the current force layout and compute the underlying TAM. 
+Use the 'F' key again to unfreeze and re-energize the layout simulation. While freezed, individual nodes can still 
 be repositioned by picking and pulling with the mouse.
 
-Use the 'I' key or the menu switch to activate contour hilighting on mouse-over.
+Use the 'H' key or the menu switch to activate contour hilighting on mouse-over.
 
 Use the mousewheel to zoom in or zoom out and click-and-drag to pan the viewport.
