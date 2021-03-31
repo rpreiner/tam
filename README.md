@@ -5,6 +5,9 @@ Demo Implementation for Publication
 https://diglib.eg.org/handle/10.1111/cgf13987 <br>
 Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
+### Changelog
+
+* version 1.14:&nbsp;&nbsp; added SVG export and improved, collapsable menu structure
 
 ### Run the Demo
 
