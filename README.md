@@ -5,6 +5,7 @@ Demo Implementation for Publication
 https://diglib.eg.org/handle/10.1111/cgf13987 <br>
 Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
+
 ### Run the Demo
 
 The Webdemo can be directly run by opening the index.htm file in the Firefox browser (last tested on Version 86.0).
@@ -38,12 +39,19 @@ Left: MA.json, right: MA.ged
 ### Controls
 
 Initially the D3 force layout can be interactively modified by picking and pulling individual nodes 
-and by using the force strength controls in the menu.
+and by using the "Force Layout" controls in the menu. Use to "Graph Appearance" menu to adjust its visual settings.
 
 Use the 'F' key or the menu switch to freeze the current force layout and compute the underlying TAM. 
 Use the 'F' key again to unfreeze and re-energize the layout simulation. While freezed, individual nodes can still 
-be repositioned by picking and pulling with the mouse.
+be repositioned by picking and pulling with the mouse. One the TAM is visible, its visual appearance can be adjusted 
+in the "Map Appearance" menu.
 
 Use the 'H' key or the menu switch to activate contour hilighting on mouse-over.
 
 Use the mousewheel to zoom in or zoom out and click-and-drag to pan the viewport.
+
+
+### Image Export
+
+The currently visible TAM can be exported as Scalable Vector Graphics (SVG) file, by clicking the "SVG" button, 
+or hitting the 'E' key. SVGs can be opened in the browser and viewed at any zoom level.

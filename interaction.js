@@ -87,8 +87,9 @@ function setTAMInteractions()
 				toggleShowTunnels();
 				d3.select("#settings_show_tunnels").property('checked', PARAM_SHOW_TUNNELS);
 			}
-
-			settings_show_tunnels
+			else if (d3.event.keyCode == "E".charCodeAt(0)) {
+				document.getElementById("btnSvgExport").click();
+			}
 		});
 	
 	// make nodes draggable

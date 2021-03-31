@@ -8,8 +8,8 @@
 }
 
 body {
-    color: #222;
-    font-family: Arial, Helvetica, sans-serif;
+	color: #222;
+	font-family: Arial, Helvetica, sans-serif;
 	overflow: hidden;
 }
 
@@ -32,9 +32,26 @@ body {
 mix-blend-mode: multiply;
 }*/
 
+.title {
+	padding: 5px 0px 10px 0px;
+	text-align: center;
+	font-family: 'Segoe UI';
+	font-size: 10pt;
+	font-weight:600;
+}
+.version {
+	font-size: 6pt;
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: right;
+	margin-left: 3px;
+	font-weight: normal;
+}
+
+
 /* ######################### Menu Bar ######################### */
 
 table.menu {
+	display: inline-table;
 	table-layout: fixed;
 	border-collapse: collapse;
 	width: 100%;
@@ -48,20 +65,29 @@ td.paramlabel {
 	white-space: nowrap;
 }
 
-input.filelabel {
-	width: 145px;
-	background: #eee;
-	padding: 2pt;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size:9pt;
-}
-
 td.param {
 	padding: 0px 0px 3px 5px;
 	width: 45px;
 	overflow: hidden;
 	white-space: nowrap;
 	text-align: right;
+}
+
+.menu_toggler + .menu {
+	display: none;
+}
+
+.menu_toggler:checked + .menu {
+	display: inline-table;
+}
+
+
+input.filelabel {
+	width: 145px;
+	background: #eee;
+	padding: 2pt;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 9pt;
 }
 
 .paramspinbox {
@@ -76,20 +102,12 @@ td.param {
 	width: 200px;
 	height: 100%;
 	padding: 0px 5px 5px 5px;
-	border: 1px solid #CCCCCC;
-	background-color: rgb(255, 255, 255);
+	border: 1px solid #cccccc;
+	background-color: #f6f6f6;
 	font-size: 9pt;
+	box-shadow: 2px 0px 4px gray;
 }
 
-#menubar .parameter {
-	margin: 5px 0px 0px 0px;
-	text-align: left;
-}
-
-#menubar .parameter table {
-	width: 100%;
-	font-size: 9pt;
-}
 
 #menubar button {
     background: transparent;
@@ -109,10 +127,10 @@ td.param {
 	color:#fff;	
 	box-shadow: 0 3px 0 #0c8d72;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
-    -webkit-transition: all 0.2s ease-in-out 0s;
-    -moz-transition: all 0.2s ease-in-out 0s;
-    -ms-transition: all 0.2s ease-in-out 0s;
-    transition: all 0.2s ease-in-out 0s;
+    -webkit-transition: all 0.1s ease-in-out 0s;
+    -moz-transition: all 0.1s ease-in-out 0s;
+    -ms-transition: all 0.1s ease-in-out 0s;
+    transition: all 0.1s ease-in-out 0s;
 }
 
 #menubar button:hover{
@@ -144,8 +162,8 @@ td.param {
 	right: 0;
 	bottom: 0;
 	background-color: #ccc;
-	-webkit-transition: .2s;
-	transition: .2s;
+	-webkit-transition: .1s;
+	transition: .1s;
 	border-radius: 20px;
 }
 
@@ -157,8 +175,8 @@ td.param {
 	left: 3px;
 	bottom: 3px;
 	background-color: white;
-	-webkit-transition: .2s;
-	transition: .2s;
+	-webkit-transition: .1s;
+	transition: .1s;
 	border-radius: 50%;
 }
 
@@ -176,15 +194,28 @@ td.param {
 	transform: translateX(14px);
 }
 
-#menubar fieldset {
-	margin: 5px 5px 10px 5px;
-	padding: 7px;
-	border: 1px solid rgb(200,200,200);
+	#menubar fieldset {
+		margin: 5px 5px 10px 5px;
+		padding: 7px;
+		background: white;
+		border: 1px solid rgb(200,200,200);
+		/*box-shadow: 2px 2px 2px gray;*/
+	}
+
+#menubar fieldset legend label {
+	font-size: 8pt;
+	padding: 2px 5px 2px 5px;
+	background: white;
+	border: 1px solid transparent;
 }
 
-#menubar fieldset legend {
-	font-size: 7pt;
-	margin: 0px 3px 0px 3px;
+#menubar fieldset legend label.toggler {
+	cursor: pointer;
+}
+
+#menubar fieldset legend label.toggler:hover {
+	border: 1px solid #bbb;
+	background: #f6f6f6;
 }
 
 #menubar fieldset table {
@@ -195,3 +226,8 @@ td.param {
 	margin: 15px 0px 5px 0px;
 	text-align: center;
 }
+
+input.button {
+	padding: 1px 4px;
+}
+

@@ -65,8 +65,16 @@ class TFMRenderer extends TAMRenderer
 		{
 			// add family
 			f.type = "FAMILY";
+			f.vis = { 'x': 0, 'y': 0 };
 			f.familyname = (f.husband && f.husband.surname ? f.husband.surname : (f.wife && f.wife.surname ? f.wife.surname : "")).toUpperCase();
-			f.vis = {'x': 0, 'y': 0};
+
+			// Show correct surnames in single-child families (Suggestion Walter Hess)
+			//{
+			//    f.familyname = "";
+			//    if (f.husband && f.husband.surname) f.familyname = f.husband.surname.toUpperCase();
+			//    else if (f.children.length == 1)    f.familyname = f.children[0].surname.toUpperCase();
+			//}
+			
 			
 			// compute value of this node
 			if (f.children.length == 0) {
