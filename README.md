@@ -7,7 +7,8 @@ Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
 ### Changelog
 
-* version 1.14:&nbsp;&nbsp; added SVG export and improved, collapsable menu structure
+* version 1.15:&nbsp;&nbsp; Performance improvement when using zero similarity strength. 
+* version 1.14:&nbsp;&nbsp; Added SVG export and improved, collapsable menu structure.
 
 ### Run the Demo
 

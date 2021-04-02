@@ -207,7 +207,7 @@ class TAMRenderer
 			.append("line")
 			.attr("stroke", PARAM_LINK_COLOR)
 			.attr("stroke-width", PARAM_LINK_WIDTH + "px")
-			.attr("stroke-opacity", PARAM_LINK_OPACITY)
+			.attr("stroke-opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
 			.attr("marker-end",	function(link) { return link.directed ? "url(#arrow)" : "none"; });
 			
 		this.SVG_NODE_CIRCLES = this.GRAPH_LAYER.selectAll(".nodes")
@@ -243,6 +243,9 @@ class TAMRenderer
 
 	similarityForce(nodes, alpha) 
 	{ 
+		if (PARAM_SF_STRENGTH == 0)
+			return;
+
 		var target_slope = 20;	// a value difference of 1 should map to a unit distance of 10
 
 		const VIRTUAL_LINK_STRENGTH = PARAM_SF_STRENGTH / Math.max(nodes.length,1);
@@ -393,7 +396,7 @@ class TAMRenderer
 		if (this.SVG_INDICATOR_LABELS) this.SVG_INDICATOR_LABELS.remove();
 
 		// make the original simple links visible again
-		if (this.SVG_LINKS) this.SVG_LINKS.attr("opacity", 1);  
+		if (this.SVG_LINKS && PARAM_SHOW_LINKS) this.SVG_LINKS.attr("opacity", 1);  
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

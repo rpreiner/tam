@@ -147,7 +147,7 @@ class TFMRenderer extends TAMRenderer
 			.append("line")
 			.attr("stroke", PARAM_LINK_COLOR)
 			.attr("stroke-width", PARAM_LINK_WIDTH + "px")
-			.attr("stroke-opacity", PARAM_LINK_OPACITY)
+			.attr("stroke-opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
 			.attr("marker-end","url(#arrow)");
 
 		this.SVG_NODE_CIRCLES = this.GRAPH_LAYER.selectAll(".person")
