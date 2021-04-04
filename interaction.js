@@ -13,7 +13,7 @@
 function initInteractions() 
 {
 	// Add pattern for single heightfield selection and highlighting
-	CANVAS.append("defs").append("pattern")
+	renderer.CANVAS.append("defs").append("pattern")
 		.attr("id","myPattern")
 		.attr("width", 40)
 		.attr("height", 40)
@@ -32,7 +32,7 @@ function initInteractions()
 	d3.select("#tam").call(
 		d3.zoom()
 			.scaleExtent([.01, 100])
-			.on("zoom", function() { CANVAS.attr("transform", d3.event.transform); })
+			.on("zoom", function() { renderer.CANVAS.attr("transform", d3.event.transform); })
 	);
 
 	// define interaction possibilities for graph svg
@@ -59,24 +59,41 @@ function setTAMInteractions()
 				toggleReverseColormap();
 				d3.select("#settings_reversecolor").property('checked', PARAM_REVERSE_COLORMAP);
 			}
-			else if (d3.event.keyCode == "I".charCodeAt(0)) {
+			else if (d3.event.keyCode == "H".charCodeAt(0)) {
 				toggleSelectTime();
 				d3.select("#settings_select_time").property('checked', PARAM_USE_MOUSEOVER);
 			}
-			else if (d3.event.keyCode == "E".charCodeAt(0)) {
+			else if (d3.event.keyCode == "F".charCodeAt(0)) {
 				toggleEnergizeSimulation();
+				d3.select("#settings_freeze").property('checked', !PARAM_ENERGIZE);
+			}
+			else if (d3.event.keyCode == "N".charCodeAt(0)) {
+				toggleNames();
+				d3.select("#settings_show_names").property('checked', PARAM_SHOW_NAMES);
 			}
 			else if(d3.event.keyCode == "G".charCodeAt(0)) {
 				toggleShowGraph();
 				d3.select("#settings_show_graph").property('checked', PARAM_SHOW_GRAPH);
 			}
+			else if (d3.event.keyCode == "M".charCodeAt(0)) {
+				toggleShowContours();
+				d3.select("#settings_show_contours").property('checked', PARAM_SHOW_CONTOURS);
+			}
 			else if (d3.event.keyCode == "L".charCodeAt(0)) {
 				toggleLinks();
+				d3.select("#settings_show_links").property('checked', PARAM_SHOW_LINKS);
+			}
+			else if (d3.event.keyCode == "T".charCodeAt(0)) {
+				toggleShowTunnels();
+				d3.select("#settings_show_tunnels").property('checked', PARAM_SHOW_TUNNELS);
+			}
+			else if (d3.event.keyCode == "E".charCodeAt(0)) {
+				document.getElementById("btnSvgExport").click();
 			}
 		});
 	
 	// make nodes draggable
-	SVG_DRAGABLE_ELEMENTS.call(d3.drag()
+	renderer.SVG_DRAGABLE_ELEMENTS.call(d3.drag()
 		.on("start", dragStartNode)
 		.on("drag", dragNode)
 		.on("end", dragEndNode)
@@ -85,7 +102,7 @@ function setTAMInteractions()
 //---------------------------------------------------------------------------
 function mouseoverContour(c)
 {
-	SVG_CONTOURS
+	renderer.SVG_CONTOURS
 		.attr("fill",
 			function(d)
 			{
@@ -94,7 +111,7 @@ function mouseoverContour(c)
 				{
 					return "url(#myPattern) #000";//chromadepth(0.5);
 				}
-				return SVG_COLORMAP(d.value);
+				return renderer.SVG_COLORMAP(d.value);
 			}
 		);
 }
@@ -104,12 +121,12 @@ function dragStartNode(d)
 	d3.event.sourceEvent.stopPropagation();
 	if (!d3.event.active)
 	{
-		resetScalarField();
+		renderer.resetScalarField();
 
 		if (!PARAM_ENERGIZE)
-			FORCE_SIMULATION.velocityDecay(1);	// don't move anything than the selected node!
+			renderer.FORCE_SIMULATION.velocityDecay(1);	// don't move anything than the selected node!
 
-		FORCE_SIMULATION.alpha(PARAM_ALPHA).restart();
+		renderer.FORCE_SIMULATION.alpha(PARAM_ALPHA).restart();
 	}
 	d.fx = d.x;
 	d.fy = d.y;
@@ -126,17 +143,17 @@ function toggleEnergizeSimulation()
 	PARAM_ENERGIZE = !PARAM_ENERGIZE;
 	if (PARAM_ENERGIZE)
 	{
-		resetScalarField();
-		FORCE_SIMULATION.alpha(PARAM_ALPHA).restart();
+		renderer.resetScalarField();
+		renderer.FORCE_SIMULATION.alpha(PARAM_ALPHA).restart();
 	}
 	else
-		FORCE_SIMULATION.alpha(0);
+		renderer.FORCE_SIMULATION.alpha(0);
 }
 //---------------------------------------------------------------------------
 function dragEndNode(d)
 {
 	if (!d3.event.active && !PARAM_ENERGIZE)
-		FORCE_SIMULATION.velocityDecay(PARAM_FRICTION).alpha(0);	// reset friction
+		renderer.FORCE_SIMULATION.velocityDecay(PARAM_FRICTION).alpha(0);	// reset friction
 
 	d.fx = null;
 	d.fy = null;
@@ -145,59 +162,58 @@ function dragEndNode(d)
 function toggleShading()
 {
 	PARAM_SHADING = !PARAM_SHADING;
-	SHADING_LAYER.attr("visibility", PARAM_SHOW_CONTOURS && PARAM_SHADING ? "visible" : "hidden");
+	renderer.SHADING_LAYER.attr("visibility", PARAM_SHOW_CONTOURS && PARAM_SHADING ? "visible" : "hidden");
 }
 //---------------------------------------------------------------------------
 function toggleLinks()
 {
 	PARAM_SHOW_LINKS = !PARAM_SHOW_LINKS;
-	SVG_LINKS.attr("opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
-	if (SVG_LINKS_STREETS) SVG_LINKS_STREETS.attr("opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
-	if (SVG_LINKS_TUNNELS) SVG_LINKS_TUNNELS.attr("opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
-	if (SVG_TUNNEL_ENTRIES_1) SVG_TUNNEL_ENTRIES_1.attr("opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
-	if (SVG_TUNNEL_ENTRIES_2) SVG_TUNNEL_ENTRIES_2.attr("opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
+	renderer.toggleLinks(PARAM_SHOW_LINKS);
 }
 //---------------------------------------------------------------------------
 function toggleShowGraph()
 {
 	PARAM_SHOW_GRAPH = !PARAM_SHOW_GRAPH;
-	GRAPH_LAYER.attr("visibility", PARAM_SHOW_GRAPH ? "visible" : "hidden");
+	renderer.GRAPH_LAYER.attr("visibility", PARAM_SHOW_GRAPH ? "visible" : "hidden");
 }
 //---------------------------------------------------------------------------
 function toggleShowContours()
 {
 	PARAM_SHOW_CONTOURS = !PARAM_SHOW_CONTOURS;
-	TOPO_LAYER.attr("visibility", PARAM_SHOW_CONTOURS ? "visible" : "hidden");
-	SHADING_LAYER.attr("visibility", PARAM_SHOW_CONTOURS && PARAM_SHADING ? "visible" : "hidden");
+	renderer.TOPO_LAYER.attr("visibility", PARAM_SHOW_CONTOURS ? "visible" : "hidden");
+	renderer.SHADING_LAYER.attr("visibility", PARAM_SHOW_CONTOURS && PARAM_SHADING ? "visible" : "hidden");
 }
 //---------------------------------------------------------------------------
 function toggleNames()
 {
 	PARAM_SHOW_NAMES = !PARAM_SHOW_NAMES;
 	if (PARAM_SHOW_NAMES)
-		showNames();
+		renderer.showNames();
 	else
-	{
-		if (SVG_PERSON_LABELS)	SVG_PERSON_LABELS.remove();
-		if (SVG_LABELS)			SVG_LABELS.remove();
-	}
+		renderer.hideNames();
+}
+//---------------------------------------------------------------------------
+function toggleShowTunnels()
+{
+	PARAM_SHOW_TUNNELS = !PARAM_SHOW_TUNNELS;
+	if (!PARAM_ENERGIZE) renderer.updateScalarField();
 }
 //---------------------------------------------------------------------------
 function toggleReverseColormap() 
 {
 	PARAM_REVERSE_COLORMAP = !PARAM_REVERSE_COLORMAP;
-	setColorMap();
-	updateScalarField();
+	renderer.setColorMap();
+	if (!PARAM_ENERGIZE) renderer.updateScalarField();
 }
 //---------------------------------------------------------------------------
 function toggleSelectTime()
 {
 	PARAM_USE_MOUSEOVER = !PARAM_USE_MOUSEOVER;
 	if (PARAM_USE_MOUSEOVER) {
-		TOPO_LAYER.selectAll("path.contours").on("mouseover", mouseoverContour);
+		renderer.TOPO_LAYER.selectAll("path.contours").on("mouseover", mouseoverContour);
 	} else {
-		resetColormap();
-		TOPO_LAYER.selectAll("path.contours").on("mouseover", null);
+		renderer.resetColormap();
+		renderer.TOPO_LAYER.selectAll("path.contours").on("mouseover", null);
 	}
 }
 
@@ -245,23 +261,20 @@ function setMenubarInteractions()
 {
 	d3.select("#settings_interpolation_type").on("input", function() {
 		PARAM_INTERPOLATE_NN = this.checked;
-		updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 
 	d3.select("#settings_contour_step").property("value", PARAM_CONTOUR_STEP).on("input", function() {
 		PARAM_CONTOUR_STEP = parseFloat(this.value);
-		if (!PARAM_ENERGIZE)
-			updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_contour_big_step").on("input", function() {
 		PARAM_CONTOUR_BIG_STEP = parseFloat(this.value);
-		if (!PARAM_ENERGIZE)
-			updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_noderadius").on("input", function() {
 		PARAM_NODE_RADIUS = parseInt(this.value);
-		if (SVG_PERSON_CIRCLES) SVG_PERSON_CIRCLES.attr("r", PARAM_NODE_RADIUS)
-		if (SVG_NODE_CIRCLES) SVG_NODE_CIRCLES.attr("r", PARAM_NODE_RADIUS)
+		if (renderer.SVG_NODE_CIRCLES) renderer.SVG_NODE_CIRCLES.attr("r", PARAM_NODE_RADIUS)
 	});
 	d3.select("#settings_linkdist").on("input", function() {
 		PARAM_LINK_DISTANCE = parseInt(this.value);
@@ -269,53 +282,56 @@ function setMenubarInteractions()
 	
 	d3.select("#settings_linkwidth").on("input", function() {
 		PARAM_LINK_WIDTH = parseInt(this.value);
-		if (SVG_LINKS)	SVG_LINKS.attr("stroke-width", PARAM_LINK_WIDTH + "px");
+		if (renderer.SVG_LINKS)	renderer.SVG_LINKS.attr("stroke-width", PARAM_LINK_WIDTH + "px");
+		if (renderer.SVG_LINKS_STREETS) renderer.SVG_LINKS_STREETS.attr("stroke-width", PARAM_LINK_WIDTH + "px");
+		if (renderer.SVG_LINKS_TUNNELS) renderer.SVG_LINKS_TUNNELS.attr("stroke-width", PARAM_LINK_WIDTH + "px");
+		if (renderer.SVG_TUNNEL_ENTRIES_1) renderer.SVG_TUNNEL_ENTRIES_1.attr("stroke-width", PARAM_LINK_WIDTH + "px");
+		if (renderer.SVG_TUNNEL_ENTRIES_2) renderer.SVG_TUNNEL_ENTRIES_2.attr("stroke-width", PARAM_LINK_WIDTH + "px");
 	});
 	d3.select("#settings_pnodeopacity").on("input", function() {
 		PARAM_PERSON_LABEL_OPACITY = parseFloat(this.value);
-		if (SVG_PERSON_LABELS) SVG_PERSON_LABELS.style("opacity", PARAM_PERSON_LABEL_OPACITY);
-		if (SVG_LABELS) SVG_LABELS.style("opacity", PARAM_PERSON_LABEL_OPACITY);
+		if (renderer.SVG_NODE_LABELS) renderer.SVG_NODE_LABELS.style("opacity", PARAM_PERSON_LABEL_OPACITY);
 	});
 	d3.select("#settings_simforce_strength").on("input", function() {
 		PARAM_SF_STRENGTH = parseFloat(this.value);	
 	});
 	d3.select("#settings_repulsion_strength").on("input", function() {
 		PARAM_REPULSION_STRENGTH = this.value;	
-		REPULSION_FORCE.strength(-PARAM_REPULSION_STRENGTH);
+		renderer.REPULSION_FORCE.strength(-PARAM_REPULSION_STRENGTH);
 	});
 	d3.select("#settings_link_strength").on("input", function() {
 		PARAM_LINK_STRENGTH = this.value;	
-		LINK_FORCE.strength(PARAM_LINK_STRENGTH);
+		renderer.LINK_FORCE.strength(PARAM_LINK_STRENGTH);
 	});
 	d3.select("#settings_friction").on("input", function() {
 		PARAM_FRICTION = parseFloat(this.value);
-		FORCE_SIMULATION.velocityDecay(PARAM_FRICTION);
+		renderer.FORCE_SIMULATION.velocityDecay(PARAM_FRICTION);
 	});
 	d3.select("#settings_gravity_x").on("input", function() {
 		PARAM_GRAVITY_X = parseFloat(this.value);
-		FORCE_SIMULATION.force("x", d3.forceX(0).strength(PARAM_GRAVITY_X)) 
+		renderer.FORCE_SIMULATION.force("x", d3.forceX(0).strength(PARAM_GRAVITY_X)) 
 	});
 	d3.select("#settings_gravity_y").on("input", function() {
 		PARAM_GRAVITY_Y = parseFloat(this.value);
-		FORCE_SIMULATION.force("y", d3.forceY(0).strength(PARAM_GRAVITY_Y)) 
+		renderer.FORCE_SIMULATION.force("y", d3.forceY(0).strength(PARAM_GRAVITY_Y)) 
 	});
 	d3.select("#settings_embed_links").on("input", function() {
 		PARAM_EMBED_LINKS = !PARAM_EMBED_LINKS;
-		updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_dilation_degree").on("input", function() {
 		PARAM_SCALARFIELD_DILATION_ITERS = parseFloat(this.value);
-		updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_show_names").on("input", function() {
 		toggleNames();
 	});
 	d3.select("#settings_indicator_size").on("input", function() {
 		PARAM_INDICATOR_FONTSIZE = this.value;
+		if (renderer.SVG_INDICATOR_LABELS) renderer.SVG_INDICATOR_LABELS.style("font-size", PARAM_INDICATOR_FONTSIZE);
 	});
-	d3.select("#settings_show_tunnels").on("input", function() {
-		PARAM_SHOW_TUNNELS = !PARAM_SHOW_TUNNELS;
-		updateScalarField();
+	d3.select("#settings_show_tunnels").on("input", function () {
+		toggleShowTunnels();
 	});
 	d3.select("#settings_show_contours").on("input", function() {
 		toggleShowContours();
@@ -334,36 +350,37 @@ function setMenubarInteractions()
 	});	
 	d3.select("#settings_select_time").on("click", function(e){
 		toggleSelectTime();
+	});	
+	d3.select("#settings_freeze").on("click", function (e) {
+		toggleEnergizeSimulation();
 	});		
 	d3.select("#settings_range_min").on("input", function() {
 		PARAM_RANGE_MIN = parseFloat(this.value);
-		setColorMap();
-		updateRange();
-		
-		if (!PARAM_ENERGIZE) updateScalarField();
+		renderer.setColorMap();
+		renderer.updateRange();		
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_range_max").on("input", function() {
 		PARAM_RANGE_MAX = parseFloat(this.value);
-		setColorMap();
-		updateRange();
-
-		if (!PARAM_ENERGIZE) updateScalarField();
+		renderer.setColorMap();
+		renderer.updateRange();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_height_scale").on("input", function() {
 		PARAM_HEIGHT_SCALE = parseFloat(this.value);
-		if (!PARAM_ENERGIZE) updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_resolution").on("input", function() {
 		PARAM_SCALARFIELD_RESOLUTION = parseInt(this.value);
-		if (!PARAM_ENERGIZE) updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_link_sample_step").on("input", function() {
 		PARAM_LINK_SAMPLE_STEPSIZE = parseInt(this.value);
-		if (!PARAM_ENERGIZE) updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 	d3.select("#settings_underground_threshold").on("input", function() {
 		PARAM_UNDERGROUND_THRESHOLD = parseFloat(this.value);
-		if (!PARAM_ENERGIZE) updateScalarField();
+		if (!PARAM_ENERGIZE) renderer.updateScalarField();
 	});
 }
 //---------------------------------------------------------------------------
