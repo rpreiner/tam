@@ -9,6 +9,24 @@ import re
 
 __author__ = "Florian Straub"
 
+def add_child(parentId, childId, idsWithNodes, nodesWithFamily, res):
+    if parentId != "" and childId in idsWithNodes:
+        nodesWithFamily.append(parentId)
+        link = {"source" : parentId, "target" : childId, "directed": True}
+        res["links"].append(link)
+        estimate_year(parentId, childId, res)
+        if childId not in nodesWithFamily:  
+            nodesWithFamily.append(childId)
+
+def estimate_year(parentId, childId, res):
+    childNode = next(x for x in res["nodes"] if x['id'] == child)
+    parentNode = next((x for x in res["nodes"] if x['id'] == husb), None)
+    if parentNode is not None and 'value' not in parentNode:
+        estimatedBirth = childNode['value'] - 20
+        print("estimated birth for " + parentNode['id'] + " (" + parentNode['name'] + "): " + str(estimatedBirth))
+        parentNode['value'] = estimatedBirth
+
+    
 parser = argparse.ArgumentParser(description='convert GEDCOM file to JSON file for use in Topographic Attribute Maps')
 parser.add_argument('gedcom', type=str, help='path to GEDCOM file')
 parser.add_argument('json', type=str, help='path to JSON file')
@@ -29,11 +47,11 @@ with open(args.gedcom, encoding='utf8', errors='ignore') as f:
         line = lines[i]
         if " INDI" in line:
             if "id" in node:
-                if "value" in node:
-                    res["nodes"].append(node)
-                    idsWithNodes.append(node["id"])
-                else:
-                    print("skipping yearless " + node["id"] + ": " + node["name"])
+                #if "value" in node:
+                res["nodes"].append(node)
+                idsWithNodes.append(node["id"])
+                #else:
+                #print("skipping yearless " + node["id"] + ": " + node["name"])
             lineParts = line.split()
             node = {"id" : lineParts[1]}
         elif "1 NAME" in line:
@@ -53,19 +71,8 @@ with open(args.gedcom, encoding='utf8', errors='ignore') as f:
                 wife = ""
         elif "1 CHIL " in line:
             child = line[7:].strip()
-            childWasAdded = False
-            if husb != "" and child in idsWithNodes:
-                nodesWithFamily.append(husb)
-                link = {"source" : husb, "target" : child, "directed": True}
-                res["links"].append(link)
-                childWasAdded = True
-            if wife != "" and child in idsWithNodes:
-                nodesWithFamily.append(wife)
-                link = {"source" : wife, "target" : child, "directed": True}
-                res["links"].append(link)
-                childWasAdded = True
-            if childWasAdded is True:
-                nodesWithFamily.append(child)
+            add_child(husb, child, idsWithNodes, nodesWithFamily, res)
+            add_child(wife, child, idsWithNodes, nodesWithFamily, res)
         elif "0 " in line and " FAM" in line:
             husb = ""
             wife = ""
@@ -84,3 +91,5 @@ for orphanNode in nodesWithoutParents:
 
 with open(args.json, 'w', encoding="utf8") as outfile:
     json.dump(res, outfile, indent=3)
+
+
