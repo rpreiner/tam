@@ -6,7 +6,6 @@ this is just a proof of concept and might contain serious mistakes and problems
 import argparse
 import json
 import re
-
 __author__ = "Florian Straub"
 
 def add_child(parentId, childId, idsWithNodes, nodesWithFamily, res):
@@ -14,26 +13,24 @@ def add_child(parentId, childId, idsWithNodes, nodesWithFamily, res):
         nodesWithFamily.append(parentId)
         link = {"source" : parentId, "target" : childId, "directed": True}
         res["links"].append(link)
-        estimate_year(parentId, childId, res)
         if childId not in nodesWithFamily:  
             nodesWithFamily.append(childId)
 
-def estimate_year(parentId, childId, res):
-    childNode = next(x for x in res["nodes"] if x['id'] == child)
-    parentNode = next((x for x in res["nodes"] if x['id'] == husb), None)
-    if parentNode is not None and 'value' not in parentNode:
-        estimatedBirth = childNode['value'] - 20
-        print("estimated birth for " + parentNode['id'] + " (" + parentNode['name'] + "): " + str(estimatedBirth))
-        parentNode['value'] = estimatedBirth
-
+def fill_missing_years(childNode, res):
+    for parentId in (x for x in res['links'] if x['target'] == childNode['id']):
+        parentNode = next((x for x in res["nodes"] if x['id'] == parentId['source']), None)
+        if parentNode is not None and 'value' not in parentNode and 'value' in childNode:
+            estimatedBirth = childNode['value'] - 20
+            print("estimated birth for " + parentNode['id'] + " (" + parentNode['name'] + "): " + str(estimatedBirth))
+            parentNode['value'] = estimatedBirth
+            fill_missing_years(parentNode, res)
     
 parser = argparse.ArgumentParser(description='convert GEDCOM file to JSON file for use in Topographic Attribute Maps')
 parser.add_argument('gedcom', type=str, help='path to GEDCOM file')
 parser.add_argument('json', type=str, help='path to JSON file')
 args = parser.parse_args()
-
-nodesWithFamily = []
 res = {}
+nodesWithFamily = []
 res["nodes"] = []
 res["links"] = []
 
@@ -88,6 +85,9 @@ for orphanNode in nodesWithoutParents:
     except:
         print ("removing orphan " + orphanNode["id"] + " which cannot be displayed properly")
     res["nodes"].remove(orphanNode)
+
+for oneNode in res["nodes"]:
+    fill_missing_years(oneNode, res)
 
 with open(args.json, 'w', encoding="utf8") as outfile:
     json.dump(res, outfile, indent=3)
