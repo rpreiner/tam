@@ -39,7 +39,8 @@ After [downloading and installing python](https://www.python.org/downloads/) you
     python ged2json <GEDCOM file> <JSON file>
 	
 In order only to have valid JSON entries for TAM the GEDCOM records will be filtered. 
-Records that do not state at least one parent are obmitted. If no birth year is given, birth of a child - 20 will be used.
+Records that do not state at least one parent are obmitted. If no birth year is given, birth of a child - 20 will be used. 
+This currently only works if at least children have birth years.
 
 Use the generated JSON file to replace the file MA.json in the data directory. Then just reload index.htm 
 in your browser in order to see the persons from the GEDCOM file. Since TAM only is a 
