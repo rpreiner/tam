@@ -42,6 +42,8 @@ Left: MA.json, right: MA.ged
 
 ### Controls
 
+The behaviour and appearance of the graph is controlled by the menu on the left, which is structured into different parameter groups that can be expanded and collapsed by clicking onto the panel title.
+
 Initially the D3 force layout can be interactively modified by picking and pulling individual nodes 
 and by using the "Force Layout" controls in the menu. Use to "Graph Appearance" menu to adjust its visual settings.
 
