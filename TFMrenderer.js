@@ -222,25 +222,26 @@ class TFMRenderer extends TAMRenderer
 		// set visualization positions of persons by pushing them back into their parent family circle
 		this.SVG_NODE_CIRCLES.each(p =>
 		{
+			// set visualization position to simulation position by default
+			p.vis.x = p.x;
+			p.vis.y = p.y;
+
 			if (p.parentFamily) 
 			{
-				if (p.parentFamily.children.length == 1) {
+				if (p.parentFamily.children.length == 1)
+				{
 					p.vis.x = p.parentFamily.x;
 					p.vis.y = p.parentFamily.y;
 				}
-				else {
-					var dist = distance(p, p.parentFamily);	// actual distance between node simulation positions
-					if (dist > p.fnodedist)
-					{
+				else
+				{
+					var dist = distance(p.vis, p.parentFamily);	// actual distance between node vis positions
+					if (dist > p.fnodedist){
 						var fac = (dist - p.fnodedist) / dist;
-						p.vis.x = p.x + (p.parentFamily.x - p.x) * fac;
-						p.vis.y = p.y + (p.parentFamily.y - p.y) * fac;
+						p.vis.x += (p.parentFamily.x - p.vis.x) * fac;
+						p.vis.y += (p.parentFamily.y - p.vis.y) * fac;
 					}
 				}
-			}
-			else {
-				p.vis.x = p.x; 
-				p.vis.y = p.y;
 			}
 		});
 		
