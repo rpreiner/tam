@@ -44,13 +44,15 @@ with open(args.gedcom, encoding='utf8', errors='ignore') as f:
         line = lines[i]
         if " INDI" in line:
             if "id" in node:
-                #if "value" in node:
                 res["nodes"].append(node)
                 idsWithNodes.append(node["id"])
-                #else:
-                #print("skipping yearless " + node["id"] + ": " + node["name"])
             lineParts = line.split()
             node = {"id" : lineParts[1]}
+        elif " FAM" in line and "id" in node:
+            #last INDI before FAMs start
+            res["nodes"].append(node)
+            idsWithNodes.append(node["id"])
+            node = {}
         elif "1 NAME" in line:
             node["name"] = line[7:].strip().replace('/', '')
         elif "1 BIRT" in line and "2 DATE" in lines[i+1]:
