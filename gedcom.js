@@ -25,7 +25,7 @@ class Person
         this.ddate = null;
         
         this.families = [];     // list of families this person belongs to
-   }
+    }
 
     getFullName()
     {

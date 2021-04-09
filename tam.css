@@ -1,233 +1,232 @@
 
 /* ######################### General ######################### */
 
-*{
-	margin: 0;
-	border: 0;
-	padding: 0;
+* {
+    margin: 0;
+    border: 0;
+    padding: 0;
 }
 
 body {
-	color: #222;
-	font-family: Arial, Helvetica, sans-serif;
-	overflow: hidden;
+    color: #222;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
 }
 
 
 /* ######################### SVG Canvas ######################### */
 
 #canvas {
-	margin-left: 200px;
-	height: 100%;
-	vertical-align: top;
-	overflow: hidden;
+    margin-left: 200px;
+    height: 100%;
+    vertical-align: top;
+    overflow: hidden;
 }
 
 #tam {
-	width: 100%;
-	height: 100%;
-}	
+    width: 100%;
+    height: 100%;
+}
 
 /*.shadingContours {
 mix-blend-mode: multiply;
 }*/
 
 .title {
-	padding: 5px 0px 10px 0px;
-	text-align: center;
-	font-family: 'Segoe UI';
-	font-size: 10pt;
-	font-weight:600;
+    padding: 5px 0px 10px 0px;
+    text-align: center;
+    font-family: 'Segoe UI';
+    font-size: 10pt;
+    font-weight: 600;
 }
+
 .version {
-	font-size: 6pt;
-	font-family: Arial, Helvetica, sans-serif;
-	text-align: right;
-	margin-left: 3px;
-	font-weight: normal;
+    font-size: 6pt;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: right;
+    margin-left: 3px;
+    font-weight: normal;
 }
 
 
 /* ######################### Menu Bar ######################### */
 
 table.menu {
-	display: inline-table;
-	table-layout: fixed;
-	border-collapse: collapse;
-	width: 100%;
-	max-width: 155px;
+    display: inline-table;
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 155px;
 }
 
 td.paramlabel {
-	width: 110px;
-	padding: 0px 15px 3px 0px;
-	overflow: hidden;
-	white-space: nowrap;
+    width: 110px;
+    padding: 0px 15px 3px 0px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 td.param {
-	padding: 0px 0px 3px 5px;
-	width: 45px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-align: right;
+    padding: 0px 0px 3px 5px;
+    width: 45px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: right;
 }
 
 .menu_toggler + .menu {
-	display: none;
+    display: none;
 }
 
 .menu_toggler:checked + .menu {
-	display: inline-table;
+    display: inline-table;
 }
 
-
 input.filelabel {
-	width: 145px;
-	background: #eee;
-	padding: 2pt;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 9pt;
+    width: 145px;
+    background: #eee;
+    padding: 2pt;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9pt;
 }
 
 .paramspinbox {
-	width: 45px; 
-	text-align: right;
-	font-size: 9pt;
+    width: 45px;
+    text-align: right;
+    font-size: 9pt;
 }
 
 #menubar {
-	float: left;
-	display: inline-block;
-	width: 200px;
-	height: 100%;
-	padding: 0px 5px 5px 5px;
-	border: 1px solid #cccccc;
-	background-color: #f6f6f6;
-	font-size: 9pt;
-	box-shadow: 2px 0px 4px gray;
-}
-
-
-#menubar button {
-    background: transparent;
-	 border-radius: 15em;
-    border: 2px solid transparent;
-    box-sizing: border-box;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1;
-    padding: 10px 10px;
-    text-align: center;
-    text-decoration: none;
+    float: left;
     display: inline-block;
-    outline: none;
-	background:#10bc98;
-	color:#fff;	
-	box-shadow: 0 3px 0 #0c8d72;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
-    -webkit-transition: all 0.1s ease-in-out 0s;
-    -moz-transition: all 0.1s ease-in-out 0s;
-    -ms-transition: all 0.1s ease-in-out 0s;
-    transition: all 0.1s ease-in-out 0s;
+    width: 200px;
+    height: 100%;
+    padding: 0px 5px 5px 5px;
+    border: 1px solid #cccccc;
+    background-color: #f6f6f6;
+    font-size: 9pt;
+    box-shadow: 2px 0px 4px gray;
 }
 
-#menubar button:hover{
-	background:#13d7ae;
-}
 
-#menubar button:active, #menubar button:focus{
-	background:#0fae8d;
-}
+    #menubar button {
+        background: transparent;
+        border-radius: 15em;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1;
+        padding: 10px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        outline: none;
+        background: #10bc98;
+        color: #fff;
+        box-shadow: 0 3px 0 #0c8d72;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+        -webkit-transition: all 0.1s ease-in-out 0s;
+        -moz-transition: all 0.1s ease-in-out 0s;
+        -ms-transition: all 0.1s ease-in-out 0s;
+        transition: all 0.1s ease-in-out 0s;
+    }
 
-#menubar .switch {
-	position: relative;
-	display: inline-block;
-	width: 34px;
-	height: 20px;
-}
+        #menubar button:hover {
+            background: #13d7ae;
+        }
 
-#menubar .switch input {
-	opacity: 0;
-	width: 0;
-	height: 0;
-}
+        #menubar button:active, #menubar button:focus {
+            background: #0fae8d;
+        }
 
-#menubar .slider {
-	position: absolute;
-	cursor: pointer;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: #ccc;
-	-webkit-transition: .1s;
-	transition: .1s;
-	border-radius: 20px;
-}
+    #menubar .switch {
+        position: relative;
+        display: inline-block;
+        width: 34px;
+        height: 20px;
+    }
 
-#menubar .slider:before {
-	position: absolute;
-	content: "";
-	height: 14px;
-	width: 14px;
-	left: 3px;
-	bottom: 3px;
-	background-color: white;
-	-webkit-transition: .1s;
-	transition: .1s;
-	border-radius: 50%;
-}
+        #menubar .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-#menubar input:checked + .slider {
-	background-color: #4fc46f; /*#34c759*/
-}
+    #menubar .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .1s;
+        transition: .1s;
+        border-radius: 20px;
+    }
 
-#menubar input:focus + .slider {
-	box-shadow: 0 0 1px #4fc46f; /*#34c759*/
-}
+        #menubar .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            -webkit-transition: .1s;
+            transition: .1s;
+            border-radius: 50%;
+        }
 
-#menubar input:checked + .slider:before {
-	-webkit-transform: translateX(14px);
-	-ms-transform: translateX(14px);
-	transform: translateX(14px);
-}
+    #menubar input:checked + .slider {
+        background-color: #4fc46f; /*#34c759*/
+    }
 
-	#menubar fieldset {
-		margin: 5px 5px 10px 5px;
-		padding: 7px;
-		background: white;
-		border: 1px solid rgb(200,200,200);
-		/*box-shadow: 2px 2px 2px gray;*/
-	}
+    #menubar input:focus + .slider {
+        box-shadow: 0 0 1px #4fc46f; /*#34c759*/
+    }
 
-#menubar fieldset legend label {
-	font-size: 8pt;
-	padding: 2px 5px 2px 5px;
-	background: white;
-	border: 1px solid transparent;
-}
+    #menubar input:checked + .slider:before {
+        -webkit-transform: translateX(14px);
+        -ms-transform: translateX(14px);
+        transform: translateX(14px);
+    }
 
-#menubar fieldset legend label.toggler {
-	cursor: pointer;
-}
+    #menubar fieldset {
+        margin: 5px 5px 10px 5px;
+        padding: 7px;
+        background: white;
+        border: 1px solid rgb(200,200,200);
+        /*box-shadow: 2px 2px 2px gray;*/
+    }
 
-#menubar fieldset legend label.toggler:hover {
-	border: 1px solid #bbb;
-	background: #f6f6f6;
-}
+        #menubar fieldset legend label {
+            font-size: 8pt;
+            padding: 2px 5px 2px 5px;
+            background: white;
+            border: 1px solid transparent;
+        }
 
-#menubar fieldset table {
-	font-size: 9pt;
-}
+            #menubar fieldset legend label.toggler {
+                cursor: pointer;
+            }
 
-#menubar fieldset .btn {
-	margin: 15px 0px 5px 0px;
-	text-align: center;
-}
+                #menubar fieldset legend label.toggler:hover {
+                    border: 1px solid #bbb;
+                    background: #f6f6f6;
+                }
+
+        #menubar fieldset table {
+            font-size: 9pt;
+        }
+
+        #menubar fieldset .btn {
+            margin: 15px 0px 5px 0px;
+            text-align: center;
+        }
 
 input.button {
-	padding: 1px 4px;
+    padding: 1px 4px;
 }
-
