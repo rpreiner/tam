@@ -22,11 +22,13 @@ function readSingleFile(e)
         var url = e.target.result;
         if (renderer.FORCE_SIMULATION) renderer.FORCE_SIMULATION.stop();
         resetSVGLayers();
-        if (file.name.endsWith(".json")) {
+        if (file.name.endsWith(".json") || file.name.endsWith(".tam")) {
+            PARAM_FILENAME = file.name;
             renderer = new TAMRenderer();
             d3.json(url).then(function (json) { renderer.createForceGraphJSON(json) });
         }
         else if (file.name.endsWith(".ged")) {
+            PARAM_FILENAME = file.name;
             renderer = new TFMRenderer();
             loadGedcom(url, function (gedcom) {
                 estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);

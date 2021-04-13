@@ -830,5 +830,16 @@ class TAMRenderer
 		return node.name + (node.id ? " (" + node.id + ")" : "")
 			+ "\nValue: " + node.value;
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	saveData()
+	{
+		let content = [JSON.stringify({ "nodes": this.NODES, "links": this.LINKS }, removeInternalValuesFromJSON, 2)];
+		let blob = new Blob(content, { type: "text/json" });
+		let filenameWithoutSuffix = PARAM_FILENAME.slice(0, PARAM_FILENAME.lastIndexOf('.'));
+
+		createDownloadFromBlob(blob, filenameWithoutSuffix + ".tam");
+	}
 }
 
