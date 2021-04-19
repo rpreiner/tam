@@ -25,11 +25,22 @@ function readSingleFile(e)
         if (file.name.endsWith(".json") || file.name.endsWith(".tam")) {
             PARAM_FILENAME = file.name;
             renderer = new TAMRenderer();
-            d3.json(url).then(function (json) { renderer.createForceGraphJSON(json) });
+            d3.json(url).then(function (json) {
+                if ("parameters" in json) {
+                    console.log("Loading parameters from file.");
+                    setParameters(json.parameters);
+                }
+                else {
+                    console.log("File does not contain parameters.");
+                    setDefaultParameters();
+                }
+                renderer.createForceGraphJSON(json);
+            });
         }
         else if (file.name.endsWith(".ged")) {
             PARAM_FILENAME = file.name;
             renderer = new TFMRenderer();
+            setDefaultParameters();
             loadGedcom(url, function (gedcom) {
                 estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
                 renderer.createFamilyForceGraph(gedcom);

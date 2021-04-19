@@ -30,7 +30,7 @@
 <body>
 	<div id="menubar">
 		<div class="title">Topographic Attribute Maps  
-			<span class="version">1.17</span>
+			<span id="version" class="version">1.17</span>
 		</div>
 		<fieldset>
 			<legend><label>File Chooser</label></legend>
@@ -253,7 +253,7 @@ var PARAM_FILENAME = "MA.ged";
 var PARAM_PROCREATION_AGE = 20;
 
 
-if (PARAM_FILENAME.endsWith(".json")) {
+if (PARAM_FILENAME.endsWith(".json") || PARAM_FILENAME.endsWith(".tam")) {
 	var renderer = new TAMRenderer();
 	d3.json(folder + "/" + PARAM_FILENAME).then(function(json){ renderer.createForceGraphJSON(json) });
 }

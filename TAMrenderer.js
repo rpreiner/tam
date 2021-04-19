@@ -196,6 +196,9 @@ class TAMRenderer
 			.on("tick", function tick() { renderer.tick(); })
 			.on("end", function update() { renderer.updateScalarField(); });
 
+		if (!PARAM_ENERGIZE) // this parameter may be loaded from an exported save file
+			this.FORCE_SIMULATION.alpha(0); // stop simulation
+
 		console.log("Force Graph Initialized.")
 
 		
@@ -210,7 +213,7 @@ class TAMRenderer
 			.append("line")
 			.attr("stroke", PARAM_LINK_COLOR)
 			.attr("stroke-width", PARAM_LINK_WIDTH + "px")
-			.attr("stroke-opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
+			.attr("opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
 			.attr("marker-end",	function(link) { return link.directed ? "url(#arrow)" : "none"; });
 			
 		this.SVG_NODE_CIRCLES = this.GRAPH_LAYER.selectAll(".nodes")
@@ -835,7 +838,14 @@ class TAMRenderer
 
 	saveData()
 	{
-		let content = [JSON.stringify({ "nodes": this.NODES, "links": this.LINKS }, removeInternalValuesFromJSON, 2)];
+		let content = [JSON.stringify(
+			{
+				"metadata": getMetadata(),
+				"parameters": getParameters(),
+				"nodes": this.NODES,
+				"links": this.LINKS
+			},
+			removeInternalValuesFromJSON, 2)];
 		let blob = new Blob(content, { type: "text/json" });
 		let filenameWithoutSuffix = PARAM_FILENAME.slice(0, PARAM_FILENAME.lastIndexOf('.'));
 
