@@ -115,7 +115,8 @@ function getParameters()
         "PARAM_UNDERGROUND_THRESHOLD" : PARAM_UNDERGROUND_THRESHOLD,
 
         // other
-        "PARAM_FILENAME" : PARAM_FILENAME
+        // "PARAM_FILENAME" : PARAM_FILENAME,
+        "PARAM_SOURCE_FILE" : PARAM_SOURCE_FILE
     }
 
     return params;
@@ -232,6 +233,11 @@ function setParameters(params)
                 PARAM_UNDERGROUND_THRESHOLD = value;
                 break;
 
+            // other
+            case "PARAM_SOURCE_FILE":
+                PARAM_SOURCE_FILE = value;
+                break;
+
             default:
                 console.log("Unknown parameter", key, ":", value);
         }
@@ -245,18 +251,22 @@ function setParameters(params)
 // only the parameter menu is updated.
 function setDefaultParameters()
 {
+    const isTFMRenderer = renderer instanceof TFMRenderer;
+    console.log("Loading default parameters for",
+        isTFMRenderer ? "TFMRenderer." : "TAMRenderer.");
+
     // Menu "Interaction"
     PARAM_ENERGIZE = true;
     PARAM_USE_MOUSEOVER = false;
     PARAM_SHOW_TOOLTIPS = true;
 
     // Menu "Force Layout"
-    PARAM_GRAVITY_X = 0.06;
-    PARAM_GRAVITY_Y = 0.06;
+    PARAM_GRAVITY_X = isTFMRenderer ? 0.07 : 0.06;
+    PARAM_GRAVITY_Y = isTFMRenderer ? 0.07 : 0.06;
     PARAM_REPULSION_STRENGTH = 400;
-    PARAM_LINK_STRENGTH = 0.8;
+    PARAM_LINK_STRENGTH = isTFMRenderer ? 1.8 : 0.8;
     PARAM_SF_STRENGTH = 0;
-    PARAM_FRICTION = 0.4;
+    PARAM_FRICTION = isTFMRenderer ? 0.2 : 0.4;
 
     // Menu "Graph Appearance"
     PARAM_SHOW_GRAPH = true;
@@ -284,6 +294,9 @@ function setDefaultParameters()
     PARAM_SCALARFIELD_RESOLUTION = 400;
     PARAM_LINK_SAMPLE_STEPSIZE = 2;
     PARAM_UNDERGROUND_THRESHOLD = 10;
+
+    // Without menu entry
+    PARAM_ARROW_RADIUS = isTFMRenderer ? 10 : 14;
 
     initMenubar(); // update visuals based on parameter values
 }

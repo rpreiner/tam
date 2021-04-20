@@ -249,16 +249,20 @@ var folder = "data";
 
 // gedcom view with family circles
 var PARAM_FILENAME = "MA.ged";  
+var PARAM_SOURCE_FILE = ""; // original data source (e.g. ".ged" file), which will be referenced in ".tfm" files
 
 var PARAM_PROCREATION_AGE = 20;
 
 
 if (PARAM_FILENAME.endsWith(".json") || PARAM_FILENAME.endsWith(".tam")) {
+	PARAM_SOURCE_FILE = PARAM_FILENAME;
 	var renderer = new TAMRenderer();
 	d3.json(folder + "/" + PARAM_FILENAME).then(function(json){ renderer.createForceGraphJSON(json) });
 }
 else if (PARAM_FILENAME.endsWith(".ged")) {
+	PARAM_SOURCE_FILE = PARAM_FILENAME;
 	var renderer = new TFMRenderer();
+	setDefaultParameters();
 	loadGedcom(folder + "/" + PARAM_FILENAME, function(gedcom){ 
 	
 		estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
