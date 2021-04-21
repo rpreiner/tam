@@ -432,5 +432,41 @@ class TFMRenderer extends TAMRenderer
 	
 		console.log("+++ Done Updating ScalarField");
 	}
+
+	// Returns a string representation of the node to be used in tooltips
+	getNodeAttributesAsString(node)
+	{
+		if (node.type == "PERSON")
+		{
+
+			const age = node.bdate && node.ddate
+				? Math.floor((node.ddate - node.bdate) / 31536000000) // 1000ms * 60s * 60min * 24h * 365d
+				: "unknown";
+			const mother = node.getMother();
+			const father = node.getFather();
+
+			return node.getFullName() + (node.id ? " (" + node.id + ")" : "")
+				+ "\n\nBirth: " + (node.bdate ? node.bdate.toLocaleDateString() : "unknown")
+				+ "\nDeath: " + (node.ddate ? node.ddate.toLocaleDateString() : "unknown")
+				+ "\nAge: " + age
+				+ "\nMother: " + (mother ? mother.getFullName() + " (" +  mother.id + ")" : "unknown")
+				+ "\nFather: " + (father ? father.getFullName() + " (" +  father.id + ")" : "unknown");
+		}
+		else if (node.type == "FAMILY")
+		{
+			const wife = node.wife;
+			const husband = node.husband;
+
+			return node.familyname + (node.id ? " (" + node.id + ")" : "")
+				+ "\n\nWife: " + (wife ? wife.getFullName() + " (" + wife.id + ")" : "unknown")
+				+ "\nHusband: " + (husband ? husband.getFullName() + " (" + husband.id + ")" : "unknown")
+				+ "\nChildren: " + (node.children ? node.children.length : "unknown")
+				+ "\nFirst child: " + (node.value ? node.value : "unknown");;
+		}
+		else
+		{
+			return "unknown";
+		}
+	}
 }
 

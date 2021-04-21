@@ -35,6 +35,9 @@ function initInteractions()
 			.on("zoom", function() { renderer.CANVAS.attr("transform", d3.event.transform); })
 	);
 
+	// initialize tooltips for hovering over nodes
+	initTooltip();
+
 	// define interaction possibilities for graph svg
 	setTAMInteractions();
 
@@ -255,6 +258,9 @@ function initMenubar()
 	d3.select("#settings_resolution").property("value", PARAM_SCALARFIELD_RESOLUTION);	
 	d3.select("#settings_link_sample_step").property("value", PARAM_LINK_SAMPLE_STEPSIZE);	
 	d3.select("#settings_underground_threshold").property("value", PARAM_UNDERGROUND_THRESHOLD);	
+
+	// Interactive features
+	d3.select("#settings_show_tooltips").property("checked", PARAM_SHOW_TOOLTIPS);
 }
 //---------------------------------------------------------------------------
 function setMenubarInteractions()
@@ -354,6 +360,9 @@ function setMenubarInteractions()
 	d3.select("#settings_freeze").on("click", function (e) {
 		toggleEnergizeSimulation();
 	});		
+	d3.select("#settings_show_tooltips").on("click", function (e) {
+		toggleTooltip();
+	});
 	d3.select("#settings_range_min").on("input", function() {
 		PARAM_RANGE_MIN = parseFloat(this.value);
 		renderer.setColorMap();
@@ -385,3 +394,44 @@ function setMenubarInteractions()
 }
 //---------------------------------------------------------------------------
 
+function initTooltip()
+{
+	d3.select("#tooltip").remove(); // remove any previous elements
+	d3.select("body").append("div").attr("id", "tooltip");
+	registerTooltipEventhandler();
+}
+
+function registerTooltipEventhandler()
+{
+	if (PARAM_SHOW_TOOLTIPS) {
+		let tooltip = d3.select("#tooltip");
+		renderer.SVG_DRAGABLE_ELEMENTS
+			.on("mouseover", function (node) {
+				return tooltip.style("visibility", "visible");
+			})
+			.on("mouseenter", function (node) { // insert tooltip content
+				let tooltipString = renderer.getNodeAttributesAsString(node);
+				return tooltip.text(tooltipString);
+			})
+			.on("mousemove", function () { // adjust tooltip position
+				return tooltip
+					.style("top", (d3.event.pageY - 10) + "px")
+					.style("left", (d3.event.pageX + 15) + "px")
+			})
+			.on("mouseout", function () {
+				return tooltip.style("visibility", "hidden");
+			});
+	} else {
+		renderer.SVG_DRAGABLE_ELEMENTS
+			.on("mouseover", null)
+			.on("mouseenter", null)
+			.on("mousemove", null)
+			.on("mouseout", null)
+		d3.select("#tooltip").style("visibility", "hidden");
+	}
+}
+
+function toggleTooltip() {
+	PARAM_SHOW_TOOLTIPS = !PARAM_SHOW_TOOLTIPS;
+	registerTooltipEventhandler();
+}

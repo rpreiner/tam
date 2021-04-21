@@ -230,3 +230,16 @@ input.filelabel {
 input.button {
     padding: 1px 4px;
 }
+
+#tooltip {
+    position: absolute;
+    display: block;
+    font-size: 11pt;
+    visibility: hidden;
+    border-radius: 0.1rem;
+    background-color: rgba(90, 90, 90, 0.95);
+    color: white;
+    padding: 0.4em 0.4em;
+    white-space: pre-line; /* enable line breaks and wrapping */
+    max-width: 400px;
+}
