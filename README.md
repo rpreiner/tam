@@ -7,17 +7,17 @@ Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
 ### Changelog
 
-* version 1.17:&nbsp;&nbsp; Node info tooltip functionality merged from extra3
+* version 1.17:&nbsp;&nbsp; Node info tooltip functionality merged from [extra3](https://github.com/extra3)
 * version 1.16:&nbsp;&nbsp; Node positioning bugfix
 
 ### Run the Demo
 
 The Webdemo can be directly run by opening the index.htm file in the Firefox browser (last tested on Version 86.0).
-Make sure the security settings of your browser allow reading local files. (about:config -> ```privacy.file_unique_origin = false```)
 
 ### Data Loading
 
 For static loading, the file to be loaded is specified in the ``PARAM_FILENAME`` parameter at the end of index.htm. 
+To enable static loading, the security settings of your browser need to allow reading local files. (about:config -> ```privacy.file_unique_origin = false```)
 The file can now also be dynamically loaded by the user using a file chooser (thanks to Idefix!).
 
 Two file types and corresponding TAM views are possible:
