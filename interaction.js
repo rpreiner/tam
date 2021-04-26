@@ -137,12 +137,20 @@ function dragStartNode(d)
 	}
 	d.fx = d.x;
 	d.fy = d.y;
+
+	if (PARAM_SHOW_TOOLTIPS)
+		d3.select("#tooltip").style("opacity", PARAM_TOOLTIP_DRAG_OPACITY);
 }
 //---------------------------------------------------------------------------
 function dragNode(d)
 {
 	d.fx = d3.event.x;
 	d.fy = d3.event.y;
+
+	if (PARAM_SHOW_TOOLTIPS)
+		d3.select("#tooltip")
+			.style("top", (d3.event.sourceEvent.pageY - 10) + "px")
+			.style("left", (d3.event.sourceEvent.pageX + 15) + "px");
 }
 //---------------------------------------------------------------------------
 function toggleEnergizeSimulation()
@@ -164,6 +172,9 @@ function dragEndNode(d)
 
 	d.fx = null;
 	d.fy = null;
+
+	if (PARAM_SHOW_TOOLTIPS)
+		d3.select("#tooltip").style("opacity", 1.0);
 }
 //---------------------------------------------------------------------------
 function toggleShading()
@@ -426,7 +437,7 @@ function registerTooltipEventhandler()
 			.on("mousemove", function () { // adjust tooltip position
 				return tooltip
 					.style("top", (d3.event.pageY - 10) + "px")
-					.style("left", (d3.event.pageX + 15) + "px")
+					.style("left", (d3.event.pageX + 15) + "px");
 			})
 			.on("mouseout", function () {
 				return tooltip.style("visibility", "hidden");
