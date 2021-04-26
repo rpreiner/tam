@@ -69,6 +69,9 @@ var PARAM_INDICATOR_FONTSIZE = 15;
 var PARAM_MANY_SEEDS = false;
 	
 
+// Interactions
+var PARAM_SHOW_TOOLTIPS = true;
+var PARAM_TOOLTIP_DRAG_OPACITY = 0.5;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -819,6 +822,13 @@ class TAMRenderer
 		if (this.SVG_TUNNEL_ENTRIES_2) this.SVG_TUNNEL_ENTRIES_2.attr("opacity", tunnelLinkOpacity)
 		
 		if (this.SVG_LINKS) this.SVG_LINKS.attr("opacity", showLinks && (PARAM_ENERGIZE || !PARAM_SHOW_TUNNELS) ? PARAM_LINK_OPACITY : 0)
+	}
+
+	// Returns a string representation of the node to be used in tooltips
+	getNodeAttributesAsString(node)
+	{
+		return node.name + (node.id ? " (" + node.id + ")" : "")
+			+ "\nValue: " + node.value;
 	}
 }
 
