@@ -66,6 +66,10 @@ function setTAMInteractions()
 				toggleSelectTime();
 				d3.select("#settings_select_time").property('checked', PARAM_USE_MOUSEOVER);
 			}
+			else if (d3.event.keyCode == "I".charCodeAt(0)) {
+				toggleShowTooltips();
+				d3.select("#settings_show_tooltips").property('checked', PARAM_SHOW_TOOLTIPS);
+			}
 			else if (d3.event.keyCode == "F".charCodeAt(0)) {
 				toggleEnergizeSimulation();
 				d3.select("#settings_freeze").property('checked', !PARAM_ENERGIZE);
@@ -219,6 +223,12 @@ function toggleSelectTime()
 		renderer.TOPO_LAYER.selectAll("path.contours").on("mouseover", null);
 	}
 }
+//---------------------------------------------------------------------------
+function toggleShowTooltips()
+{
+	PARAM_SHOW_TOOLTIPS = !PARAM_SHOW_TOOLTIPS;
+	registerTooltipEventhandler();
+}
 
 /////////////////////////////////////////////////////////////////////////////
 ///  MENUBAR INTERACTIONS
@@ -361,7 +371,7 @@ function setMenubarInteractions()
 		toggleEnergizeSimulation();
 	});		
 	d3.select("#settings_show_tooltips").on("click", function (e) {
-		toggleTooltip();
+		toggleShowTooltips();
 	});
 	d3.select("#settings_range_min").on("input", function() {
 		PARAM_RANGE_MIN = parseFloat(this.value);
@@ -431,7 +441,3 @@ function registerTooltipEventhandler()
 	}
 }
 
-function toggleTooltip() {
-	PARAM_SHOW_TOOLTIPS = !PARAM_SHOW_TOOLTIPS;
-	registerTooltipEventhandler();
-}
