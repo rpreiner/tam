@@ -4,6 +4,9 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+let tfmNodePositions = null;
+
+
 function resetSVGLayers()
 {
     d3.select("#topolayer").remove();
@@ -66,13 +69,16 @@ function readSingleFile(e)
                 let sourcePath = folder + "/" + PARAM_SOURCE_FILE;
                 if (!checkFileExistence(sourcePath))
                 {
-                    let fileNotFoundError = "Could not find GEDCOM file \""
-                        + PARAM_SOURCE_FILE
-                        + "\".\n\nPlease put it inside the \"data\" folder of this application and \nupload \""
-                        + PARAM_FILENAME
-                        + "\" again.";
                     console.error("Couldn't find GEDCOM file", sourcePath);
-                    alert(fileNotFoundError);
+
+                    // Store node positions for later use
+                    if("nodePositions" in json)
+                        tfmNodePositions = json.nodePositions;
+                    else
+                        tfmNodePositions = null;
+
+                    // Open modal to ask user for the missing file
+                    showModal(PARAM_SOURCE_FILE);
                     return;
                 }
 
@@ -118,5 +124,47 @@ function checkFileExistence(url)
         return req.status != 404;
     } catch (error) {
         return false;
+    }
+}
+
+
+function closeModal()
+{
+    document.querySelector("#overlay").style.display = "none";
+}
+
+
+function showModal(missingFileName) {
+    if (missingFileName)
+        document.querySelector("#missing-ged-file-name").textContent = missingFileName;
+    else
+        document.querySelector("#missing-ged-file-name").textContent = "unknown";
+
+    document.querySelector("#overlay").style.display = "";
+}
+
+
+// Loads the GEDCOM file and creates the graph
+function processModalFileUpload()
+{
+    let file = document.querySelector('#modal-file-upload').files[0];
+    if (file) {
+        closeModal();
+
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            loadGedcom(reader.result, function (gedcom) {
+                estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
+
+                PARAM_SOURCE_FILE = file.name;
+
+                // use previously stored node positions (if available)
+                if (tfmNodePositions)
+                    renderer.createFamilyForceGraph(gedcom, tfmNodePositions);
+                else
+                    renderer.createFamilyForceGraph(gedcom);
+            });
+        }
     }
 }
