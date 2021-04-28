@@ -111,6 +111,33 @@ function onChangeFile(event)
     readSingleFile(event);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+
+// load data, choose renderer based on the filetype and create force graph
+function loadFileFromDisk()
+{
+    if (PARAM_FILENAME.endsWith(".json") || PARAM_FILENAME.endsWith(".tam"))
+    {
+        PARAM_SOURCE_FILE = PARAM_FILENAME;
+        renderer = new TAMRenderer();
+
+        d3.json(folder + "/" + PARAM_FILENAME).then(function(json) { renderer.createForceGraphJSON(json) });
+    }
+    else if (PARAM_FILENAME.endsWith(".ged"))
+    {
+        PARAM_SOURCE_FILE = PARAM_FILENAME;
+        renderer = new TFMRenderer();
+
+        setDefaultParameters();
+        loadGedcom(folder + "/" + PARAM_FILENAME, function(gedcom)
+        {
+            estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
+            renderer.createFamilyForceGraph(gedcom);
+        });
+    }
+}
+
 
 function checkFileExistence(url)
 {
