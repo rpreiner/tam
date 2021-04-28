@@ -23,76 +23,30 @@ function readSingleFile(e)
     var reader = new FileReader();
     reader.onload = function (e) {
         var url = e.target.result;
+        PARAM_FILENAME = file.name;
+
         if (renderer.FORCE_SIMULATION) renderer.FORCE_SIMULATION.stop();
         resetSVGLayers();
+
         if (file.name.endsWith(".json") || file.name.endsWith(".tam")) {
-            PARAM_FILENAME = file.name;
             renderer = new TAMRenderer();
-            d3.json(url).then(function (json) {
-                if ("parameters" in json) {
-                    console.log("Loading parameters from file.");
-                    setParameters(json.parameters);
-                }
-                else {
-                    console.log("File does not contain parameters.");
-                    setDefaultParameters();
-                }
-                PARAM_SOURCE_FILE = file.name;
-                renderer.createForceGraphJSON(json);
-            });
+
+            d3.json(url).then(function (json) { processJSON(json, file.name); });
         }
         else if (file.name.endsWith(".ged")) {
-            PARAM_FILENAME = file.name;
             renderer = new TFMRenderer();
             setDefaultParameters();
             PARAM_SOURCE_FILE = file.name;
+
             loadGedcom(url, function (gedcom) {
                 estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
                 renderer.createFamilyForceGraph(gedcom);
             });
         }
         else if (file.name.endsWith(".tfm")) {
-            PARAM_FILENAME = file.name;
             renderer = new TFMRenderer();
 
-            d3.json(url).then(function (json) {
-                // first try to load parameters from .tfm
-                if ("parameters" in json) {
-                    console.log("Loading parameters from file.");
-                    setParameters(json.parameters);
-                }
-                else {
-                    console.log("File does not contain parameters.");
-                    setDefaultParameters();
-                }
-
-                let sourcePath = folder + "/" + PARAM_SOURCE_FILE;
-                if (!checkFileExistence(sourcePath))
-                {
-                    console.error("Couldn't find GEDCOM file", sourcePath);
-
-                    // Store node positions for later use
-                    if("nodePositions" in json)
-                        tfmNodePositions = json.nodePositions;
-                    else
-                        tfmNodePositions = null;
-
-                    // Open modal to ask user for the missing file
-                    showModal(PARAM_SOURCE_FILE);
-                    return;
-                }
-
-                // then load the data file .ged
-                loadGedcom(sourcePath, function (gedcom) {
-                    estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
-
-                    // use node positions from .tfm (if available)
-                    if ("nodePositions" in json)
-                        renderer.createFamilyForceGraph(gedcom, json.nodePositions);
-                    else
-                        renderer.createFamilyForceGraph(gedcom);
-                });
-            });
+            d3.json(url).then(function (json) { processTFM(json); });
         }
         else
             console.error("Unrecognized file type");
@@ -117,16 +71,16 @@ function onChangeFile(event)
 // load data, choose renderer based on the filetype and create force graph
 function loadFileFromDisk()
 {
+    PARAM_SOURCE_FILE = PARAM_FILENAME;
+
     if (PARAM_FILENAME.endsWith(".json") || PARAM_FILENAME.endsWith(".tam"))
     {
-        PARAM_SOURCE_FILE = PARAM_FILENAME;
         renderer = new TAMRenderer();
 
-        d3.json(folder + "/" + PARAM_FILENAME).then(function(json) { renderer.createForceGraphJSON(json) });
+        d3.json(folder + "/" + PARAM_FILENAME).then(function(json) { processJSON(json, PARAM_FILENAME); });
     }
     else if (PARAM_FILENAME.endsWith(".ged"))
     {
-        PARAM_SOURCE_FILE = PARAM_FILENAME;
         renderer = new TFMRenderer();
 
         setDefaultParameters();
@@ -136,6 +90,74 @@ function loadFileFromDisk()
             renderer.createFamilyForceGraph(gedcom);
         });
     }
+    else if (PARAM_FILENAME.endsWith(".tfm"))
+    {
+        renderer = new TFMRenderer();
+
+        d3.json(folder + "/" + PARAM_FILENAME).then(function(json) { processTFM(json); });
+    }
+    else
+        console.error("Unrecognized file type");
+}
+
+
+// Process JSON loaded from a .json or .tam,
+// then create graph.
+function processJSON(json, filename)
+{
+    if ("parameters" in json) {
+        console.log("Loading parameters from file.");
+        setParameters(json.parameters);
+    }
+    else {
+        console.log("File does not contain parameters.");
+        setDefaultParameters();
+    }
+    PARAM_SOURCE_FILE = filename;
+    renderer.createForceGraphJSON(json);
+}
+
+
+// Process JSON loaded from a .tfm, load linked .ged or
+// ask user to upload .ged, then create graph.
+function processTFM(json)
+{
+    // first try to load parameters from .tfm
+    if ("parameters" in json) {
+        console.log("Loading parameters from file.");
+        setParameters(json.parameters);
+    }
+    else {
+        console.log("File does not contain parameters.");
+        setDefaultParameters();
+    }
+
+    let sourcePath = folder + "/" + PARAM_SOURCE_FILE; // PARAM_SOURCE_FILE is set by setParameters()
+    if (!checkFileExistence(sourcePath))
+    {
+        console.error("Couldn't find GEDCOM file", sourcePath);
+
+        // Store node positions for later use
+        if("nodePositions" in json)
+            tfmNodePositions = json.nodePositions;
+        else
+            tfmNodePositions = null;
+
+        // Open modal to ask user for the missing file
+        showModal(PARAM_SOURCE_FILE);
+        return;
+    }
+
+    // then load the data file .ged
+    loadGedcom(sourcePath, function (gedcom) {
+        estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
+
+        // use node positions from .tfm (if available)
+        if ("nodePositions" in json)
+            renderer.createFamilyForceGraph(gedcom, json.nodePositions);
+        else
+            renderer.createFamilyForceGraph(gedcom);
+    });
 }
 
 
