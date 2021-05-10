@@ -66,8 +66,8 @@ With version 1.18, the currently visible TAM layout can be saved to file by clic
 The current node positions and all layout and appearance parameters will then be saved to a file which is provided as file download to the user.
 This file can then be reloaded via the "Load File" menu, and will be restored with their last saved layout.
 
-If the current graph was originally loaded from a JSON file (general graph), the saved file will be an extension of that file and 
-provided with a ``.tam`` file extension.
+If the current graph was originally loaded from a JSON file (general graph), the saved file will contain all original data and saved with 
+``.tam`` file extension.
 
 If the current graph was built from an originally loaded GEDCOM file (family graph), the file will be saved with ``.tfm`` file extension, and only 
 store the graph layout, appearance parameters, and a reference to the original GEDCOM filename that stores the genealogical content. 
@@ -77,8 +77,8 @@ Note that in order to load the graph again, the linked GEDCOM file is expected t
 
 Saving the family graph layout as TFM file allows the user to extend or modify their GEDCOM file independent from the graph visualization.
 When loading a TFM file that refers to a modified GEDCOM, stored node positions will only be applied to previously existing persons or families.
-Any newly aadded persons will be shown in a centralized default location. If necessary, unfreeze the graph layout to reactivate the node positioning
-and obtain an optimized position for these new members.
+Any newly added persons will be shown in a centralized default location. If necessary, unfreeze the graph layout to reactivate the node positioning
+and obtain an optimized position for those new members.
 
 ### Image Export
 
