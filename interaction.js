@@ -252,6 +252,11 @@ function initMenubar()
 	d3.select("#settings_noderadius").property("value", PARAM_NODE_RADIUS);
 	d3.select("#settings_linkwidth").property("value", PARAM_LINK_WIDTH);
 	d3.select("#settings_pnodeopacity").property("value", PARAM_PERSON_LABEL_OPACITY);
+
+	// Interaction
+	d3.select("#settings_freeze").property('checked', !PARAM_ENERGIZE);
+	d3.select("#settings_select_time").property('checked', PARAM_USE_MOUSEOVER);
+	d3.select("#settings_show_tooltips").property('checked', PARAM_SHOW_TOOLTIPS);
 	
 	// Force Simulation
 	d3.select("#settings_repulsion_strength").property("value", PARAM_REPULSION_STRENGTH);

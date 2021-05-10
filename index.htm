@@ -30,7 +30,7 @@
 <body>
 	<div id="menubar">
 		<div class="title">Topographic Attribute Maps  
-			<span class="version">1.17</span>
+			<span id="version" class="version">1.17</span>
 		</div>
 		<fieldset>
 			<legend><label>File Chooser</label></legend>
@@ -40,7 +40,7 @@
 						<input class="filelabel" type="text" id="filename" readonly="" />
 					</td>
 					<td>
-						<input type="file" id="browse" name="fileupload" style="display: none" onChange="onChangeFile(event)" />
+						<input type="file" id="browse" name="fileupload" style="display: none" onChange="onChangeFile(event)" accept=".json, .ged, .tam, .tfm" />
 						<input class="button" type="button" style="border:1px solid gray" value="..." id="fakeBrowse" onclick="document.getElementById('browse').click()" />
 					</td>
 				</tr>
@@ -208,6 +208,8 @@
 			<table class="menu" border="0" cellpadding="0" cellspacing="1">
 				<tr>
 					<td class="paramlabel">
+						<input class="button" type="button" style="border:1px solid gray" value="Save Data" id="btnSave"
+							   onclick="renderer.saveData()" />
 						<input class="button" type="button" style="border:1px solid gray" value="SVG" id="btnSvgExport"
 							   onclick="createDownloadSVG(document.getElementById('tam').outerHTML, 'tam.svg')" />
 					</td>
@@ -235,36 +237,45 @@
 		</svg>
 	</div>
 
+	<div id="overlay" style="display: none;">
+		<div id="background" onclick="closeModal()"></div>
+		<div class="modal">
+			<button type="button" class="close" onclick="closeModal()" alt="close">×</button>
+			<h1>Missing GEDCOM file</h1>
+			<p><span id="missing-ged-file-name">unknown</span></p>
+			<p>Please select it from your computer.</p>
+			<form name="data-source">
+				<label for="modal-file-upload" class="custom-button">Open file</label>
+				<input type="file" id="modal-file-upload" onchange="processModalFileUpload()" accept=".ged" class="input-file">
+			</form>
+		</div>
+	</div>
+
 <script>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///  DATA LOADING
 
 var folder = "data";
 
-
 // default view
-//var PARAM_FILENAME = "MA.json";  
+//var PARAM_FILENAME = "MA.json";
 
 // gedcom view with family circles
-var PARAM_FILENAME = "MA.ged";  
+var PARAM_FILENAME = "MA.ged";
 
 var PARAM_PROCREATION_AGE = 20;
 
 
-if (PARAM_FILENAME.endsWith(".json")) {
-	var renderer = new TAMRenderer();
-	d3.json(folder + "/" + PARAM_FILENAME).then(function(json){ renderer.createForceGraphJSON(json) });
-}
-else if (PARAM_FILENAME.endsWith(".ged")) {
-	var renderer = new TFMRenderer();
-	loadGedcom(folder + "/" + PARAM_FILENAME, function(gedcom){ 
-	
-		estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
-		
-		renderer.createFamilyForceGraph(gedcom);
-	});
-}
-	
+//////////////////////////////
+// Don't change anything below
+
+var PARAM_SOURCE_FILE = ""; // original data source (e.g. ".ged" file), which will be referenced in ".tfm" files
+var renderer = null;
+
+// Load data and create force graph (see openFile.js).
+// Uses folder and PARAM_FILENAME from above.
+loadFileFromDisk();
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 </script>

@@ -243,3 +243,94 @@ input.button {
     white-space: pre-line; /* enable line breaks and wrapping */
     max-width: 400px;
 }
+
+/* ######################### Overlays ######################### */
+
+#overlay {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+}
+
+#background {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: black;
+    opacity: 0.5;
+}
+
+.modal {
+    position: absolute;
+    width: auto;
+    height: auto;
+    padding: 2em 2em 1em 2em;
+    top: 50%;
+    left: 50%;
+    background-color: rgb(240, 240, 240);
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 8px 12px 1px rgba(0,0,0, 0.5);
+    border-radius: 5px 5px;
+    text-align: center;
+    z-index: 99;
+}
+
+    .modal h1 {
+        font-size: 20px;
+        padding-bottom: 10px;
+    }
+
+    .modal p {
+        font-size: 16px;
+        padding-bottom: 10px;
+    }
+
+#modal-file-upload {
+    display: none;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem 0.75rem;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.0;
+    background: none;
+    color: gray;
+}
+
+    .close:hover {
+        color: revert;
+    }
+
+.custom-button {
+    background-color: #ccc;
+    padding: 10px 24px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+    .custom-button:hover {
+        background-color: #4fc46f;
+        color: white;
+
+        transition-property: all;
+        transition-duration: 150ms;
+        transition-timing-function: ease-in-out;
+        transition-delay: 0s;
+    }

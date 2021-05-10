@@ -35,15 +35,8 @@ class TFMRenderer extends TAMRenderer
 		this.SVG_FAMILY_LABELS;
 	}
 
-	createFamilyForceGraph(graph) 
+	createFamilyForceGraph(graph, nodePositions = null)
 	{
-		// Force-Layout parameters
-		PARAM_FRICTION = 0.2;
-		PARAM_LINK_STRENGTH = 1.8;
-		PARAM_GRAVITY_X = PARAM_GRAVITY_Y = 0.07;
-		PARAM_REPULSION_STRENGTH = 400;
-		PARAM_ARROW_RADIUS = 10;
-		
 		// list persons
 		//----------------------------------
 		graph.persons.forEach(p =>
@@ -52,20 +45,41 @@ class TFMRenderer extends TAMRenderer
 			p.type = "PERSON";
 			p.r = PARAM_NODE_RADIUS;
 			p.value = p.bdate ? p.bdate.getFullYear() : null;
-			p.vis = {'x': 0, 'y': 0};
+
+			// set node positions (if available)
+			if (nodePositions && nodePositions[p.id])
+			{
+				p.x = nodePositions[p.id].x;
+				p.y = nodePositions[p.id].y;
+				p.vis = {'x': p.x, 'y': p.y};
+			}
+			else
+				p.vis = {'x': 0, 'y': 0};
+
 			this.PNODES.push(p);
 		});
-		
+
 		setRange(this.PNODES);
 		
 		
 		// list families
 		//----------------------------------
-		graph.families.forEach(f => 
+		graph.families.forEach((f, key) =>
 		{
 			// add family
+			f.id = key;
 			f.type = "FAMILY";
-			f.vis = { 'x': 0, 'y': 0 };
+
+			// set node positions (if available)
+			if (nodePositions && nodePositions[key])
+			{
+				f.x = nodePositions[key].x;
+				f.y = nodePositions[key].y;
+				f.vis = {'x': f.x, 'y': f.y};
+			}
+			else
+				f.vis = {'x': 0, 'y': 0};
+
 			f.familyname = (f.husband && f.husband.surname ? f.husband.surname : (f.wife && f.wife.surname ? f.wife.surname : "")).toUpperCase();
 
 			// Show correct surnames in single-child families (Suggestion Walter Hess)
@@ -122,6 +136,9 @@ class TFMRenderer extends TAMRenderer
 			.on("tick", function tick() { renderer.tick(); })
 			.on("end", function update() { renderer.updateScalarField(); });
 
+		if (!PARAM_ENERGIZE) // this parameter may be loaded from an exported save file
+			this.FORCE_SIMULATION.alpha(0); // stop simulation
+
 		console.log("Force Graph Initialized.")
 			
 
@@ -147,7 +164,7 @@ class TFMRenderer extends TAMRenderer
 			.append("line")
 			.attr("stroke", PARAM_LINK_COLOR)
 			.attr("stroke-width", PARAM_LINK_WIDTH + "px")
-			.attr("stroke-opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
+			.attr("opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
 			.attr("marker-end","url(#arrow)");
 
 		this.SVG_NODE_CIRCLES = this.GRAPH_LAYER.selectAll(".person")
@@ -467,6 +484,28 @@ class TFMRenderer extends TAMRenderer
 		{
 			return "unknown";
 		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	saveData()
+	{
+		// store person/family node positions with their id
+		let nodePositions = {};
+		this.PNODES.forEach(p => { nodePositions[p.id] = {"x": p.x, "y": p.y}; });
+		this.FNODES.forEach(f => { nodePositions[f.id] = {"x": f.x, "y": f.y}; });
+
+		let content = [JSON.stringify(
+			{
+				"metadata": getMetadata(),
+				"parameters": getParameters(),
+				"nodePositions": nodePositions,
+			},
+			null, 2)]; // no replacement function, human readable indentation
+		let blob = new Blob(content, { type: "text/json" });
+		let filenameWithoutSuffix = PARAM_FILENAME.slice(0, PARAM_FILENAME.lastIndexOf('.'));
+
+		createDownloadFromBlob(blob, filenameWithoutSuffix + ".tfm");
 	}
 }
 
