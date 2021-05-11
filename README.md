@@ -7,6 +7,7 @@ Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
 ### Changelog
 
+* version 1.19:&nbsp;&nbsp; Encoding person sex in family graph nodes (boxes &amp; circles) and node pinning functionality.
 * version 1.18:&nbsp;&nbsp; Graph Save and Load functionality merged from [extra3](https://github.com/extra3)
 * version 1.17:&nbsp;&nbsp; Node info tooltip functionality merged from [extra3](https://github.com/extra3)
 
@@ -47,8 +48,11 @@ Left: MA.json, right: MA.ged
 The behaviour and appearance of the graph is controlled by the menu on the left, which is structured into different parameter groups 
 that can be expanded and collapsed by clicking onto the panel title.
 
-Initially the D3 force layout can be interactively modified by picking and pulling individual nodes 
+Initially the D3 force layout can be interactively modified by picking and pulling individual nodes with the mouse
 and by using the "Force Layout" controls in the menu. Use to "Graph Appearance" menu to adjust its visual settings.
+
+When picking and pulling graph nodes, they will be pinned to the location they have beend dragged to. 
+A single click onto pinned nodes will release them from their fixed position and allow them to freely move again.
 
 Use the 'F' key or the menu switch to freeze the current force layout and compute the underlying TAM. 
 Use the 'F' key again to unfreeze and re-energize the layout simulation. While freezed, individual nodes can still 
