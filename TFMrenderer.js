@@ -44,6 +44,7 @@ class TFMRenderer extends TAMRenderer
 			// set person data
 			p.type = "PERSON";
 			p.r = PARAM_NODE_RADIUS;
+			p.cr = p.sex == FEMALE ? PARAM_NODE_RADIUS : 0;
 			p.value = p.bdate ? p.bdate.getFullYear() : null;
 
 			// set node positions (if available)
@@ -51,7 +52,11 @@ class TFMRenderer extends TAMRenderer
 			{
 				p.x = nodePositions[p.id].x;
 				p.y = nodePositions[p.id].y;
-				p.vis = {'x': p.x, 'y': p.y};
+				p.vis = { 'x': p.x, 'y': p.y };
+				if (nodePositions[p.id].fixed) { // restore fixed state
+					p.fx = p.x;
+					p.fy = p.y;
+				}
 			}
 			else
 				p.vis = {'x': 0, 'y': 0};
@@ -75,7 +80,11 @@ class TFMRenderer extends TAMRenderer
 			{
 				f.x = nodePositions[key].x;
 				f.y = nodePositions[key].y;
-				f.vis = {'x': f.x, 'y': f.y};
+				f.vis = { 'x': f.x, 'y': f.y };
+				if (nodePositions[key].fixed) { // restore fixed state
+					f.fx = f.x;
+					f.fy = f.y;
+				}
 			}
 			else
 				f.vis = {'x': 0, 'y': 0};
@@ -152,6 +161,7 @@ class TFMRenderer extends TAMRenderer
 		this.SVG_FAMILY_CIRCLES = this.GRAPH_LAYER.selectAll(".family")
 			.data(this.FNODES).enter()
 			.append("circle")
+			.attr("class", "family")
 			.style("fill", "fnodeColor")
 			.style("stroke", PARAM_FAMILY_NODE_BORDER_COLOR)
 			.style("stroke-width", PARAM_FAMILY_NODE_BORDER_WIDTH)
@@ -169,11 +179,15 @@ class TFMRenderer extends TAMRenderer
 
 		this.SVG_NODE_CIRCLES = this.GRAPH_LAYER.selectAll(".person")
 			.data(this.PNODES).enter()
-			.append("circle")
+			.append("rect")
+			.attr("class", "person")
 			.style("fill", function(node) { return typeof(node.value) == "number" ? renderer.SVG_COLORMAP(node.value) : "red"; })
 			.style("stroke", "#222")
 			.attr("stroke-width", (PARAM_NODE_RADIUS / 4) + "px")
-			.attr("r", function(node) { return node.r; })
+			.attr("width", function (f) { return 2 * f.r })
+			.attr("height", function (f) { return 2 * f.r })
+			.attr("rx", function (f) { return f.cr })
+			.attr("ry", function (f) { return f.cr });
 		
 		if (PARAM_SHOW_NAMES)
 			this.showNames();
@@ -181,7 +195,7 @@ class TFMRenderer extends TAMRenderer
 		console.log("SVG Elements Initialized.")
 			
 		// Setup interactions
-		this.SVG_DRAGABLE_ELEMENTS = this.GRAPH_LAYER.selectAll("circle");
+		this.SVG_DRAGABLE_ELEMENTS = this.GRAPH_LAYER.selectAll(".family,.person");
 		initInteractions();
 		console.log("Interactions Initialized.")
 	}
@@ -269,7 +283,7 @@ class TFMRenderer extends TAMRenderer
 
 			
 		// move family and persons circles to defined position (d.x,d.y)
-		this.SVG_NODE_CIRCLES.attr("cx", function(p) { return p.vis.x; }).attr("cy", function(p) { return p.vis.y; });
+		this.SVG_NODE_CIRCLES.attr("x", function (p) { return p.vis.x - p.r; }).attr("y", function (p) { return p.vis.y - p.r; });
 		this.SVG_FAMILY_CIRCLES.attr("cx", function(f) { return f.vis.x; }).attr("cy", function(f) { return f.vis.y; }).attr("r", function(f) { return f.r; });
 		
 			
@@ -492,8 +506,8 @@ class TFMRenderer extends TAMRenderer
 	{
 		// store person/family node positions with their id
 		let nodePositions = {};
-		this.PNODES.forEach(p => { nodePositions[p.id] = {"x": p.x, "y": p.y}; });
-		this.FNODES.forEach(f => { nodePositions[f.id] = {"x": f.x, "y": f.y}; });
+		this.PNODES.forEach(p => { nodePositions[p.id] = {"x": p.x, "y": p.y, "fixed": p.fx != null}; });
+		this.FNODES.forEach(f => { nodePositions[f.id] = {"x": f.x, "y": f.y, "fixed": f.fx != null}; });
 
 		let content = [JSON.stringify(
 			{

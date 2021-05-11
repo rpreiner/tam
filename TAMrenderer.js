@@ -144,9 +144,17 @@ class TAMRenderer
 		var nodeMap = new Map();
 		Object.values(json.nodes).forEach(node => 
 		{
+			console.log(node);
+
 			node.r = PARAM_NODE_RADIUS;
 			if (node.value == 0)
 				node.value = 0.001
+
+			if (node.fixed) { // restore fixed state
+				node.fx = node.x;
+				node.fy = node.y;
+            }
+
 			nodeMap.set(node.id, node);
 			
 			this.NODES.push(node);
@@ -838,11 +846,23 @@ class TAMRenderer
 
 	saveData()
 	{
+		let nodePositions = [];
+		this.NODES.forEach(node => {
+			nodePositions.push({
+				"id": node.id,
+				"name": node.name,
+				"value": node.value,
+				"x": node.x,
+				"y": node.y,
+				"fixed": node.fx != null
+			});
+		});
+
 		let content = [JSON.stringify(
 			{
 				"metadata": getMetadata(),
 				"parameters": getParameters(),
-				"nodes": this.NODES,
+				"nodes": nodePositions,
 				"links": this.LINKS
 			},
 			removeInternalValuesFromJSON, 2)];

@@ -105,6 +105,14 @@ function setTAMInteractions()
 		.on("drag", dragNode)
 		.on("end", dragEndNode)
 	);
+
+	renderer.SVG_DRAGABLE_ELEMENTS
+		.on("click", onMouseClick)
+}
+//---------------------------------------------------------------------------
+function onMouseClick(d)
+{
+	d.fx = d.fy = null;
 }
 //---------------------------------------------------------------------------
 function mouseoverContour(c)
@@ -170,8 +178,7 @@ function dragEndNode(d)
 	if (!d3.event.active && !PARAM_ENERGIZE)
 		renderer.FORCE_SIMULATION.velocityDecay(PARAM_FRICTION).alpha(0);	// reset friction
 
-	d.fx = null;
-	d.fy = null;
+	//d.fx = d.fy = null;
 
 	if (PARAM_SHOW_TOOLTIPS)
 		d3.select("#tooltip").style("opacity", 1.0);
