@@ -28,7 +28,7 @@ function initInteractions()
 	// initialize Menubar
 	initMenubar();
 
-	// initilaize zoom and pan capabilities
+	// initialize zoom and pan capabilities
 	d3.select("#tam").call(
 		d3.zoom()
 			.scaleExtent([.01, 100])
@@ -202,6 +202,41 @@ function toggleShowGraph()
 	renderer.GRAPH_LAYER.attr("visibility", PARAM_SHOW_GRAPH ? "visible" : "hidden");
 }
 //---------------------------------------------------------------------------
+function toggleLifelines()
+{
+    if (renderer && renderer instanceof TFMRenderer)
+    {
+        // toggle state
+        PARAM_SHOW_LIFELINES = !PARAM_SHOW_LIFELINES;
+
+        let transform = renderer.CANVAS.attr("transform");  // save current view on canvas
+        
+        // save graph data
+        graph = renderer.GRAPH;
+                
+        // stop any running simulation and reset SVG layers
+        if (renderer.FORCE_SIMULATION) 
+            renderer.FORCE_SIMULATION.stop();
+        resetSVGLayers();
+
+        // create new renderer with the saved data
+        delete renderer;
+        renderer = new TFMRenderer();
+
+        // NOTE: graph already contains all the enriched data created during the createFamilyForceGraph procedure,
+        //  as well as all the simulation (p.x/y) and layout (p.vis.x/y) position data. We can still pass it as is
+        //  to the createFamilyForceGraph() function, we only need to make sure that any lifeline info is deleted
+        //  in case it is toggled off.
+        if (!PARAM_SHOW_LIFELINES)
+            graph.persons.forEach( p => delete p.lifeline );
+
+        renderer.createFamilyForceGraph(graph);
+
+        // creating a new renderer created a new SVG CANVAS -> now restore view transform of this canvas
+        renderer.CANVAS.attr("transform", transform);   
+    }
+}
+//---------------------------------------------------------------------------
 function toggleShowContours()
 {
 	PARAM_SHOW_CONTOURS = !PARAM_SHOW_CONTOURS;
@@ -277,8 +312,9 @@ function initMenubar()
 	d3.select("#settings_interpolation_type").property("checked", PARAM_INTERPOLATE_NN);
 	d3.select("#settings_embed_links").property("checked", PARAM_EMBED_LINKS);
 	d3.select("#settings_show_contours").property("checked", PARAM_SHOW_CONTOURS);	
-	d3.select("#settings_show_graph").property("checked", PARAM_SHOW_GRAPH);	
-	d3.select("#settings_show_links").property("checked", PARAM_SHOW_LINKS);	
+	d3.select("#settings_show_graph").property("checked", PARAM_SHOW_GRAPH);
+    d3.select("#settings_show_lifelines").property("checked", PARAM_SHOW_LIFELINES);
+    d3.select("#settings_show_links").property("checked", PARAM_SHOW_LINKS);	
 	d3.select("#settings_show_names").property("checked", PARAM_SHOW_NAMES);	
 	d3.select("#settings_show_tunnels").property("checked", PARAM_SHOW_TUNNELS);	
 	d3.select("#settings_dilation_degree").property("value", PARAM_SCALARFIELD_DILATION_ITERS);	
@@ -377,6 +413,9 @@ function setMenubarInteractions()
 	});
 	d3.select("#settings_show_graph").on("input", function() {
 		toggleShowGraph();
+	});
+    d3.select("#settings_show_lifelines").on("input", function() {
+		toggleLifelines();
 	});
 	d3.select("#settings_show_links").on("input", function() {
 		toggleLinks();

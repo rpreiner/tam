@@ -5,6 +5,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 let tfmNodePositions = null;
+let tfmLifelinePositions = null;
 
 
 function resetSVGLayers()
@@ -14,87 +15,63 @@ function resetSVGLayers()
     d3.select("#graphlayer").remove();
 }
 
-function readSingleFile(e)
-{
-    var file = e.target.files[0];
-    if (!file)
-        return;
-
-    var reader = new FileReader();
-    reader.onload = function (e) {
-        var url = e.target.result;
-        PARAM_FILENAME = file.name;
-
-        if (renderer.FORCE_SIMULATION) renderer.FORCE_SIMULATION.stop();
-        resetSVGLayers();
-
-        if (file.name.endsWith(".json") || file.name.endsWith(".tam")) {
-            renderer = new TAMRenderer();
-
-            d3.json(url).then(function (json) { processJSON(json, file.name); });
-        }
-        else if (file.name.endsWith(".ged")) {
-            renderer = new TFMRenderer();
-            setDefaultParameters();
-            PARAM_SOURCE_FILE = file.name;
-
-            loadGedcom(url, function (gedcom) {
-                estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
-                renderer.createFamilyForceGraph(gedcom);
-            });
-        }
-        else if (file.name.endsWith(".tfm")) {
-            renderer = new TFMRenderer();
-
-            d3.json(url).then(function (json) { processTFM(json); });
-        }
-        else
-            console.error("Unrecognized file type");
-    };
-    reader.readAsDataURL(file);
-}
-
-
 // Wrapper by rp
 function onChangeFile(event)
 {
+    // show filename in HTML edit field
     var fileinput = document.getElementById("browse");
     var textinput = document.getElementById("filename");
     textinput.value = fileinput.files[0].name;
 
-    readSingleFile(event);
+    // read file
+    var file = event.target.files[0];
+    if (!file)
+        return;
+    var reader = new FileReader();
+    reader.onload = function (e) 
+    {
+        // stop current simulations and reset SVG layers
+        if (renderer.FORCE_SIMULATION) 
+            renderer.FORCE_SIMULATION.stop();
+        resetSVGLayers();
+
+        // load file
+        var url = e.target.result;
+        loadGraphFromUrl(url, file.name);
+    };
+    reader.readAsDataURL(file);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 
 // load data, choose renderer based on the filetype and create force graph
-function loadFileFromDisk()
+function loadGraphFromUrl(url, filename)
 {
-    PARAM_SOURCE_FILE = PARAM_FILENAME;
+    PARAM_FILENAME = filename;
+    PARAM_SOURCE_FILE = filename;
 
-    if (PARAM_FILENAME.endsWith(".json") || PARAM_FILENAME.endsWith(".tam"))
+    // loading a .jsom or .tam file -> create standard TAM
+    if (filename.endsWith(".json") || filename.endsWith(".tam"))
     {
         renderer = new TAMRenderer();
-
-        d3.json(folder + "/" + PARAM_FILENAME).then(function(json) { processJSON(json, PARAM_FILENAME); });
+        d3.json(url).then(function(json) { processJSON(json, filename); });
     }
-    else if (PARAM_FILENAME.endsWith(".ged"))
+    //-- loading a GEDCOM file -> create TFM
+    else if (filename.endsWith(".ged"))
     {
         renderer = new TFMRenderer();
-
         setDefaultParameters();
-        loadGedcom(folder + "/" + PARAM_FILENAME, function(gedcom)
-        {
+        loadGedcom(url, function(gedcom) {
             estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
             renderer.createFamilyForceGraph(gedcom);
         });
     }
-    else if (PARAM_FILENAME.endsWith(".tfm"))
+    //-- loading a stored TFM
+    else if (filename.endsWith(".tfm"))
     {
         renderer = new TFMRenderer();
-
-        d3.json(folder + "/" + PARAM_FILENAME).then(function(json) { processTFM(json); });
+        d3.json(url).then(function(json) { processTFM(json); });
     }
     else
         console.error("Unrecognized file type");
@@ -113,7 +90,6 @@ function processJSON(json, filename)
         console.log("File does not contain parameters.");
         setDefaultParameters();
     }
-    PARAM_SOURCE_FILE = filename;
     renderer.createForceGraphJSON(json);
 }
 
@@ -131,33 +107,25 @@ function processTFM(json)
         console.log("File does not contain parameters.");
         setDefaultParameters();
     }
-
+    
+    // Read node and lifeline positions, stash them globally for later use in case of missing GEDCOM file
+    tfmNodePositions = ("nodePositions" in json) ? json.nodePositions : null;
+    tfmLifelinePositions = ("lifelinePositions" in json) ? json.lifelinePositions : null;
+    
     let sourcePath = folder + "/" + PARAM_SOURCE_FILE; // PARAM_SOURCE_FILE is set by setParameters()
     if (!checkFileExistence(sourcePath))
     {
         console.error("Couldn't find GEDCOM file", sourcePath);
-
-        // Store node positions for later use
-        if("nodePositions" in json)
-            tfmNodePositions = json.nodePositions;
-        else
-            tfmNodePositions = null;
-
-        // Open modal to ask user for the missing file
-        showModal(PARAM_SOURCE_FILE);
-        return;
+        showModal(PARAM_SOURCE_FILE);   // Open modal to ask user for the missing file
     }
-
-    // then load the data file .ged
-    loadGedcom(sourcePath, function (gedcom) {
-        estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
-
-        // use node positions from .tfm (if available)
-        if ("nodePositions" in json)
-            renderer.createFamilyForceGraph(gedcom, json.nodePositions);
-        else
-            renderer.createFamilyForceGraph(gedcom);
-    });
+    else
+    {
+        // load the data file .ged
+        loadGedcom(sourcePath, function (gedcom) {
+            estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
+            renderer.createFamilyForceGraph(gedcom, tfmNodePositions, tfmLifelinePositions);    // use stashed positions if available
+        });
+    }
 }
 
 
@@ -205,14 +173,10 @@ function processModalFileUpload()
         reader.onload = function () {
             loadGedcom(reader.result, function (gedcom) {
                 estimateMissingDates(gedcom, PARAM_PROCREATION_AGE);
-
                 PARAM_SOURCE_FILE = file.name;
 
                 // use previously stored node positions (if available)
-                if (tfmNodePositions)
-                    renderer.createFamilyForceGraph(gedcom, tfmNodePositions);
-                else
-                    renderer.createFamilyForceGraph(gedcom);
+                renderer.createFamilyForceGraph(gedcom, tfmNodePositions, tfmLifelinePositions);
             });
         }
     }

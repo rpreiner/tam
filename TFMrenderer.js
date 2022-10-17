@@ -16,6 +16,10 @@ var PARAM_FAMILY_NODE_BORDER_WIDTH = 10;
 var PARAM_FAMILY_FONT_SIZE = 16;
 var PARAM_FAMILY_NODE_OPACITY = 0.7;
 
+var PARAM_SHOW_LIFELINES = false;
+var PARAM_LIFELINE_COLOR = "#e00";
+var PARAM_LIFELINE_WIDTH = PARAM_NODE_RADIUS * 0.6;
+var PARAM_LIFELINE_OPACITY = 1;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,18 +29,24 @@ class TFMRenderer extends TAMRenderer
 	constructor() 
 	{
 		super();
+
+        this.GRAPH;     // holds graph data for reference to enable dynamic graph rebuilding
 		
 		this.PNODES = [];
 		this.FNODES = []
-		this.LINKNODES = [];
+		this.LLNODES = [];
 		this.FAMILYLINKS = [];
 		
 		this.SVG_FAMILY_CIRCLES;
 		this.SVG_FAMILY_LABELS;
+        this.SVG_LIFELINES;
 	}
 
-	createFamilyForceGraph(graph, nodePositions = null)
+	createFamilyForceGraph(graph, nodePositions = null, lifelinePositions = null)
 	{
+        this.GRAPH = graph;     // save graph data temporarily to enable lifeline toggling
+        var LINKS = [];
+		
 		// list persons
 		//----------------------------------
 		graph.persons.forEach(p =>
@@ -62,6 +72,47 @@ class TFMRenderer extends TAMRenderer
 				p.vis = {'x': 0, 'y': 0};
 
 			this.PNODES.push(p);
+
+
+            // if active, create lifeline nodes
+            if (PARAM_SHOW_LIFELINES)
+            {
+                if (true && p.bdate && p.ddate)
+                {
+                    var startVal = p.bdate.getFullYear();
+                    var endVal = p.ddate.getFullYear();
+
+                    const segmentRange = 30;      // number of years per lifeline segment
+                    p.lifeline = [p];
+                    var val = startVal; 
+                    do
+                    {   var step = Math.min(segmentRange, endVal - val);
+                        val += step;
+                        
+                        // initialize node with random location scattered around the person location
+                        // -> leads to a smooth 'growing' appearance of lifelines if dynamically switched on
+                        var node = { 'type': "LIFELINENODE", 'value': val, 
+                                     'x': p.x + 3 * PARAM_NODE_RADIUS * Math.random(),
+                                     'y': p.y + 3 * PARAM_NODE_RADIUS * Math.random()
+                                    }; 
+                        var link = { "source": p.lifeline.at(-1), "target": node, "distance": step * PARAM_RANGE_UNIT_LEN };    // array.at(-1) retrieves last element in array
+                        
+                        p.lifeline.push(node);
+                        this.LLNODES.push(node);
+                        LINKS.push(link);
+                    } 
+                    while (val < endVal);
+
+                    // apply saved lifeline positions, if available
+                    if (lifelinePositions && lifelinePositions[p.id]) {
+                        var llpos = lifelinePositions[p.id];
+                        for (var i = 1; i < p.lifeline.length && i < llpos.length; i++) {
+                            p.lifeline[i].x = llpos[i].x;
+                            p.lifeline[i].y = llpos[i].y;
+                        }
+                    }
+                }
+            }
 		});
 
 		setRange(this.PNODES);
@@ -97,8 +148,7 @@ class TFMRenderer extends TAMRenderer
 			//    if (f.husband && f.husband.surname) f.familyname = f.husband.surname.toUpperCase();
 			//    else if (f.children.length == 1)    f.familyname = f.children[0].surname.toUpperCase();
 			//}
-			
-			
+						
 			// compute value of this node
 			if (f.children.length == 0) {
 				f.value = null;
@@ -115,15 +165,13 @@ class TFMRenderer extends TAMRenderer
 
 		// link persons depending on ancestral graph appearance
 		//-------------------------------------------------------------
-		var LINKS = [];
 		this.linkPersonsByFamilyNode(graph, LINKS);
-		
-		
+				
 		// Concat node links participating in force simulation in painter's order
 		var NODES = this.FNODES.slice(0);
-		this.LINKNODES.forEach(n => NODES.push(n));
+		this.LLNODES.forEach(n => NODES.push(n));
 		this.PNODES.forEach(n => NODES.push(n));
-			
+        	
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// FORCE SIMULATION OF FORCE-DIRECTED GRAPH
@@ -154,7 +202,6 @@ class TFMRenderer extends TAMRenderer
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///  CREATE SVG ELEMENTS
 
-		this.initSVGLayers();
 		this.setColorMap();
 		
 		// bottom layer
@@ -174,8 +221,16 @@ class TFMRenderer extends TAMRenderer
 			.append("line")
 			.attr("stroke", PARAM_LINK_COLOR)
 			.attr("stroke-width", PARAM_LINK_WIDTH + "px")
-			.attr("opacity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
+			.attr("opacfity", PARAM_SHOW_LINKS ? PARAM_LINK_OPACITY : 0)
 			.attr("marker-end","url(#arrow)");
+
+        this.SVG_LIFELINES = this.GRAPH_LAYER.selectAll(".lifelines")
+            .data(this.PNODES).enter()
+            .append("polyline")
+            .attr("fill","none")
+            .attr("stroke", PARAM_LIFELINE_COLOR)
+            .attr("stroke-width", PARAM_LIFELINE_WIDTH + "px")
+            .attr("stroke-opacity", PARAM_LIFELINE_OPACITY);
 
 		this.SVG_NODE_CIRCLES = this.GRAPH_LAYER.selectAll(".person")
 			.data(this.PNODES).enter()
@@ -215,10 +270,10 @@ class TFMRenderer extends TAMRenderer
 				c.fnodedist = familyDefaultRadius * 0.5;
 				if (c.bdate) c.fnodedist += (c.bdate.getFullYear() - f.value) * PARAM_RANGE_UNIT_LEN;
 
-				// faimly circle radius has to encompass all childs
+				// family circle radius has to encompass all childs
 				f.r = Math.max(f.r, c.fnodedist);
 				
-				var link = { "source": f, "target": c, "distance": PARAM_LINK_DISTANCE / 2 };	// division by 2 since there are two segments between family nodes
+				var link = { "source": f, "target": c, "distance": PARAM_LINK_DISTANCE * 0.2 };     // 20 %
 				LINKS.push(link);
 
 				c.parentFamily = f;
@@ -233,7 +288,7 @@ class TFMRenderer extends TAMRenderer
 			if (f.wife) sources.push(f.wife);
 			sources.forEach(source => 
 			{
-				var link = { "source": source, "target": f, "distance": PARAM_LINK_DISTANCE*0.8 + f.r }
+				var link = { "source": source, "target": f, "distance": PARAM_LINK_DISTANCE * 0.8 + f.r }   // 80 % + family radius
 				LINKS.push(link);
 				this.FAMILYLINKS.push(link);
 			})
@@ -250,31 +305,42 @@ class TFMRenderer extends TAMRenderer
 			return;
 			
 		
-		// set visualization positions of persons by pushing them back into their parent family circle
-		this.SVG_NODE_CIRCLES.each(p =>
-		{
-			// set visualization position to simulation position by default
-			p.vis.x = p.x;
-			p.vis.y = p.y;
+        this.SVG_NODE_CIRCLES.each(p =>
+        {
+            // clamp simulation position to boundard of parent family circle (avoid being too close to family or sibling nodes to avoid exploding forces)
+            // the simulation position p is where lifelines are attached to, we therefore want p as close to the final vis position p.vis as possible
+            if (p.parentFamily) 
+            {
+                var dist = distance(p, p.parentFamily);	// actual distance between node positions
+                if (dist > p.parentFamily.r){
+                    var fac = (dist - p.parentFamily.r) / dist;
+                    p.x += (p.parentFamily.x - p.x) * fac;
+                    p.y += (p.parentFamily.y - p.y) * fac;
+                }
+            }
 
-			if (p.parentFamily) 
-			{
-				if (p.parentFamily.children.length == 1)
-				{
-					p.vis.x = p.parentFamily.x;
-					p.vis.y = p.parentFamily.y;
-				}
-				else
-				{
-					var dist = distance(p.vis, p.parentFamily);	// actual distance between node vis positions
-					if (dist > p.fnodedist){
-						var fac = (dist - p.fnodedist) / dist;
-						p.vis.x += (p.parentFamily.x - p.vis.x) * fac;
-						p.vis.y += (p.parentFamily.y - p.vis.y) * fac;
-					}
-				}
-			}
-		});
+            // set visualization position p.vis. By default, this is the simulation position
+            p.vis.x = p.x;
+            p.vis.y = p.y;
+
+            if (p.parentFamily)     // in case of families, clamp to alternative vis position inside the parent family circle
+            {
+                if (p.parentFamily.children.length == 1)    // single child -> visualize at family circle center
+                {
+                    p.vis.x = p.parentFamily.x;
+                    p.vis.y = p.parentFamily.y;
+                }
+                else    // multiple siblings -> visualize at age-dependendent distance from family center.
+                {
+                    var dist = distance(p.vis, p.parentFamily);	// actual distance between node vis positions
+                    if (dist > p.fnodedist){
+                        var fac = (dist - p.fnodedist) / dist;
+                        p.vis.x += (p.parentFamily.x - p.vis.x) * fac;
+                        p.vis.y += (p.parentFamily.y - p.vis.y) * fac;
+                    }
+                }
+            }
+        });
 		
 		this.SVG_FAMILY_CIRCLES.each(f => {
 			f.vis.x = f.x; 
@@ -292,7 +358,7 @@ class TFMRenderer extends TAMRenderer
 			.attr("x1", function(d) { return d.source.vis.x; })
 			.attr("y1", function(d) { return d.source.vis.y; })
 			.attr("x2", function(d) { 
-				//if (d.target.type != "FAMILY") return d.targete.x;
+				//if (d.target.type != "FAMILY") return d.target.x;
 				var l = distance(d.source.vis, d.target.vis), t = (l - d.target.r - PARAM_ARROW_DISTANCE_FACTOR * PARAM_ARROW_RADIUS) / l;
 				var x = d.source.vis.x * (1-t) + d.target.vis.x * t;
 				return isNaN(x) ? d.target.vis.x : x;
@@ -304,6 +370,28 @@ class TFMRenderer extends TAMRenderer
 				return isNaN(y) ? d.target.vis.y : y;
 			})
 		
+        // update lifeline points
+        if (this.SVG_LIFELINES)
+        {	
+            this.SVG_LIFELINES.attr('points', function(p) {
+                var path = [];    
+                if (p.lifeline) 
+                {
+                    // smooth the simulation points of the curve to avoid bends
+                    for (var i = 1; i < p.lifeline.length-1; i++) {  
+                        p.lifeline[i].x = p.lifeline[i].x * 0.2 + (p.lifeline[i-1].x + p.lifeline[i+1].x) * 0.4;
+                        p.lifeline[i].y = p.lifeline[i].y * 0.2 + (p.lifeline[i-1].y + p.lifeline[i+1].y) * 0.4;
+                    }
+                    
+                    // define visualized lifeline path
+                    path.push([p.vis.x, p.vis.y]);  // first lifeline node is the person itself -> anchor at its .vis position
+                    for (var i = 1; i < p.lifeline.length; i++)
+                        path.push([ p.lifeline[i].x, p.lifeline[i].y ]);
+                }
+                return path;
+            })
+        }
+
 		// set labels
 		if (PARAM_SHOW_NAMES)
 		{
@@ -367,7 +455,47 @@ class TFMRenderer extends TAMRenderer
 
 	placeLabel(node)
 	{
-		if (PARAM_PERSON_LABELS_BELOW_NODE)
+        // lifeline present (only for person nodes) and sufficiently long
+        if (node.lifeline && node.lifeline.length > 1)
+        {
+            // find actually visible path and its mid length
+            var len = 0;
+            var path = [node.vis];
+            var dists = [0];
+            for (var i = 1; i < node.lifeline.length; i++) {
+                path.push(node.lifeline[i]);
+                dists.push( distance(path.at(-2), path.at(-1)) );
+                len += dists.at(-1);
+            }
+            len *= 0.5;
+            
+            for (var i = 1; i < path.length; i++)
+            {
+                if (dists[i] > len)
+                {
+                    // align label with this segment
+                    var x0 = vec.copy(path[i-1]);
+                    var x1 = vec.copy(path[i]);
+                    var v = x1.sub(x0).div(dists[i]);    // if dists[i] is zero, len wouldn't fall in this segment 
+                    
+                    // center position
+                    var pos = x0.add(v.mul(len));
+
+                    // angle
+                    if (v.x < 0) v = v.negate();
+                    var n = new vec(v.y, -v.x);
+                    var angle = Math.atan2(v.y, v.x) * 57.3;       // 180/pi. atan2 is quite expensive in JS
+
+                    pos = pos.add(v.mul(-node.labelwidth * 0.5)).add(n.mul(PARAM_LIFELINE_WIDTH));
+                                
+                    return "translate(" + pos.x + ", " + pos.y + ")  rotate(" + angle + ")";
+                }
+                len -= dists[i];
+            }
+        }
+         
+        // if lifeline-based label position not possible or successful, use default label positioning
+        if (PARAM_PERSON_LABELS_BELOW_NODE)
 		{
 			// below the node
 			var x = node.vis.x - node.labelwidth * 0.5;
@@ -393,14 +521,39 @@ class TFMRenderer extends TAMRenderer
 		var topopoints = [];
 
 		// add constraints at person positions
-		this.PNODES.forEach(p =>	{
-			if (isNumber(p.value)) topopoints.push({ 'x' : p.vis.x, 'y': p.vis.y, 'value' : p.value });
+		this.PNODES.forEach(p => 
+        {
+			if (isNumber(p.value)) 
+                topopoints.push({ 'x' : p.vis.x, 'y': p.vis.y, 'value' : p.value });
+
+            // if present, create topopoints for lifelines
+            if (p.lifeline) 
+            {
+                // Note: p.lifeline[0] does not equal its visualized starting point, but the simulation point of the person
+                var path = p.lifeline.slice(0);
+                path[0].x = p.vis.x;
+                path[0].y = p.vis.y;
+
+                for (var j = 0; j < path.length-1; j++) 
+                {
+                    var pv0 = new vec(path[j].x, path[j].y, path[j].value);
+                    var pv1 = new vec(path[j+1].x, path[j+1].y, path[j+1].value);
+                    var v = pv1.sub(pv0);
+                    var nsteps = v.norm() / PARAM_LINK_SAMPLE_STEPSIZE;
+                    if (nsteps > 0) {
+                        v = v.div(nsteps);
+                        for (var i = 0, pv = pv0; i < nsteps; i++, pv = pv.add(v))
+                            topopoints.push({ 'x' : pv.x, 'y': pv.y, 'value' : pv.z });
+                    }
+                }
+            }
 		})
 			
-		// Create Topopoints for Family Links
-		if (PARAM_EMBED_LINKS)
+		
+        if (PARAM_EMBED_LINKS)
 		{
-			this.FAMILYLINKS.forEach(link => {
+			// Create Topopoints for Family Links
+		    this.FAMILYLINKS.forEach(link => {
 				if (link.source.value && link.target.value) {
 					var pv0 = new vec(link.source.vis.x, link.source.vis.y, link.source.value);
 					var pv1 = new vec(link.target.vis.x, link.target.vis.y, link.target.value);
@@ -502,21 +655,31 @@ class TFMRenderer extends TAMRenderer
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	saveData()
+    saveData()
 	{
-		// store person/family node positions with their id
+        // store person/family node positions with their id
 		let nodePositions = {};
-		this.PNODES.forEach(p => { nodePositions[p.id] = {"x": p.x, "y": p.y, "fixed": p.fx != null}; });
-		this.FNODES.forEach(f => { nodePositions[f.id] = {"x": f.x, "y": f.y, "fixed": f.fx != null}; });
-
-		let content = [JSON.stringify(
-			{
-				"metadata": getMetadata(),
-				"parameters": getParameters(),
-				"nodePositions": nodePositions,
-			},
-			null, 2)]; // no replacement function, human readable indentation
-		let blob = new Blob(content, { type: "text/json" });
+        this.FNODES.forEach(f => { nodePositions[f.id] = {"x": f.x, "y": f.y, "fixed": f.fx != null}; });
+        this.PNODES.forEach(p => { nodePositions[p.id] = {"x": p.x, "y": p.y, "fixed": p.fx != null}; });
+		
+        let lifelinePositions = {};
+        this.PNODES.forEach(p => { 
+            if (p.lifeline) {
+                var llnodes = [];
+                p.lifeline.forEach(ll => { llnodes.push({"x": ll.x, "y": ll.y }); });
+                lifelinePositions[p.id] = llnodes;
+            }
+        });
+		
+        let content = [JSON.stringify(
+            {
+                "metadata": getMetadata(),
+                "parameters": getParameters(),
+                "nodePositions": nodePositions,
+                "lifelinePositions": lifelinePositions
+            },
+            null, 2)];
+        let blob = new Blob(content, { type: "text/json" });
 		let filenameWithoutSuffix = PARAM_FILENAME.slice(0, PARAM_FILENAME.lastIndexOf('.'));
 
 		createDownloadFromBlob(blob, filenameWithoutSuffix + ".tfm");
