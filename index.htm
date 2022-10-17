@@ -31,7 +31,7 @@
 	<div id="menubar">
 		<div class="title">
 			Topographic Attribute Maps
-			<span id="version" class="version">1.19</span>
+			<span id="version" class="version">1.20</span>
 		</div>
 		<fieldset>
 			<legend><label>Load File</label></legend>
@@ -122,6 +122,10 @@
 					<tr>
 						<td class="paramlabel">Show <u>G</u>raph</td>
 						<td class="param"><label class="switch"><input id="settings_show_graph" type="checkbox"><span class="slider"></span></label></td>
+					</tr>
+                    <tr>
+						<td class="paramlabel">Show Lifelines</td>
+						<td class="param"><label class="switch"><input id="settings_show_lifelines" type="checkbox"><span class="slider"></span></label></td>
 					</tr>
 					<tr>
 						<td class="paramlabel">Show <u>L</u>inks</td>
@@ -275,7 +279,7 @@ var renderer = null;
 
 // Load data and create force graph (see openFile.js).
 // Uses folder and PARAM_FILENAME from above.
-loadFileFromDisk();
+loadGraphFromUrl(folder + "/" + PARAM_FILENAME, PARAM_FILENAME);
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

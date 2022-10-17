@@ -89,6 +89,7 @@ function getParameters()
 
         // Menu "Graph Appearance"
         "PARAM_SHOW_GRAPH" : PARAM_SHOW_GRAPH,
+        "PARAM_SHOW_LIFELINES" : PARAM_SHOW_LIFELINES,
         "PARAM_SHOW_LINKS" : PARAM_SHOW_LINKS,
         "PARAM_SHOW_NAMES" : PARAM_SHOW_NAMES,
         "PARAM_LINK_WIDTH" : PARAM_LINK_WIDTH,
@@ -165,6 +166,9 @@ function setParameters(params)
             // Menu "Graph Appearance"
             case "PARAM_SHOW_GRAPH":
                 PARAM_SHOW_GRAPH = true; // always show graph on default
+                break;
+            case "PARAM_SHOW_LIFELINES":
+                PARAM_SHOW_LIFELINES = value;
                 break;
             case "PARAM_SHOW_LINKS":
                 PARAM_SHOW_LINKS = value;
@@ -270,6 +274,7 @@ function setDefaultParameters()
 
     // Menu "Graph Appearance"
     PARAM_SHOW_GRAPH = true;
+    PARAM_SHOW_LIFELINES = false;
     PARAM_SHOW_LINKS = true;
     PARAM_SHOW_NAMES = true;
     PARAM_LINK_WIDTH = 2;

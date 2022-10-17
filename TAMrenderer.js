@@ -131,6 +131,9 @@ class TAMRenderer
 		this.FORCE_SIMULATION;
 		this.REPULSION_FORCE;
 		this.LINK_FORCE;
+
+        // we create SVG layers in the constructor to allow modifying canvas transform on renderer construction
+        this.initSVGLayers();
 	}
 
 	createForceGraphJSON(json)
@@ -213,7 +216,6 @@ class TAMRenderer
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///  CREATE SVG ELEMENTS
 
-		this.initSVGLayers();
 		this.setColorMap();
 			
 		this.SVG_LINKS = this.GRAPH_LAYER.selectAll(".link")
@@ -545,7 +547,8 @@ class TAMRenderer
 			if (!v.zero())
 			{
 				var nsteps = v.norm() / PARAM_LINK_SAMPLE_STEPSIZE;
-				if (nsteps == 0) return;
+				if (nsteps == 0) 
+                    return;
 				v = v.div(nsteps);
 
 				var wasUnderground = SCALARFIELD.sampleBilinear(pv0.x, pv0.y) - pv0.z > PARAM_UNDERGROUND_THRESHOLD;
@@ -562,15 +565,13 @@ class TAMRenderer
 						
 					if (isUnderground && !wasUnderground)
 					{
-						var pvOffset = pv;//.sub(v.mul(2));
-						INTERVALS.streets[INTERVALS.streets.length - 1][1] = pvOffset;
-						INTERVALS.tunnels.push(currentInterval = [pvOffset, pv, false]);
+						INTERVALS.streets[INTERVALS.streets.length - 1][1] = pv;
+						INTERVALS.tunnels.push(currentInterval = [pv, pv, false]);
 					}
 					else if (!isUnderground && wasUnderground)
 					{
-						var pvOffset = pv;//.add(v.mul(2));
-						INTERVALS.tunnels[INTERVALS.tunnels.length - 1][1] = pvOffset;
-						INTERVALS.streets.push(currentInterval = [pvOffset, pv, false]);
+						INTERVALS.tunnels[INTERVALS.tunnels.length - 1][1] = pv;
+						INTERVALS.streets.push(currentInterval = [pv, pv, false]);
 					}
 					else
 						currentInterval[1] = pv;
@@ -808,16 +809,18 @@ class TAMRenderer
 
 		var v = pv1.sub(pv0);
 		v.z = 0;
-		v = v.normalize();
-
-		var w = v.mul(-len * 0.5);
+        if (v.zero())
+            return [];
+        
+        v = v.normalize();
+        var w = v.mul(-len * 0.5);
 		var n = new vec(v.y, -v.x).mul(len);
 
-		var p0 = pv0.add(n)
-		var p1 = p0.add(w).add(n)
-		var q0 = pv0.sub(n)
-		var q1 = q0.add(w).sub(n)
-		
+		var p0 = pv0.add(n);
+		var p1 = p0.add(n).add(w);
+		var q0 = pv0.sub(n);
+		var q1 = q0.sub(n).add(w);
+		 
 		return [[p1.x, p1.y], [p0.x, p0.y], [q0.x, q0.y], [q1.x, q1.y]];
 	}
 	

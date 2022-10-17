@@ -7,8 +7,9 @@ Copyright 2020 Reinhold Preiner, Johanna Schmidt, Gabriel Mistelbauer
 
 ### Changelog
 
+* version 1.20:&nbsp;&nbsp; Adding Lifelines visualization functionality as shown in the paper.
 * version 1.19:&nbsp;&nbsp; Encoding person sex in family graph nodes (boxes &amp; circles) and node pinning functionality.
-* version 1.18:&nbsp;&nbsp; Graph Save and Load functionality merged from [extra3](https://github.com/extra3)
+* version 1.18:&nbsp;&nbsp; Graph Save and Load functionality merged from [extra3](https://github.com/extra3).
 
 ### Run the Demo
 
